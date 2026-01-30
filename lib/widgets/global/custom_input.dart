@@ -11,6 +11,7 @@ class CustomInput extends StatefulWidget {
   final bool isPassword;
   final IconData? icon;
   final ValueChanged<String>? onChanged;
+  final String? Function(String?)? validator;
 
   const CustomInput({
     super.key,
@@ -21,6 +22,7 @@ class CustomInput extends StatefulWidget {
     this.isPassword = false,
     this.icon,
     this.onChanged,
+    this.validator,
   });
 
   @override
@@ -43,17 +45,17 @@ class _CustomInputState extends State<CustomInput> {
         ),
         const SizedBox(height: 8),
         Container(
-          height: 64,
           decoration: BoxDecoration(
             color: AppLightTheme.surfaceGrey,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppLightTheme.dividerColor),
           ),
-          child: TextField(
+          child: TextFormField(
             controller: widget.controller,
             keyboardType: widget.keyboardType,
             obscureText: widget.isPassword && _obscureText,
             onChanged: widget.onChanged,
+            validator: widget.validator,
             style: TextStyles.bodyLarge(
               isDark: false,
             ).copyWith(color: AppLightTheme.textHeadline),

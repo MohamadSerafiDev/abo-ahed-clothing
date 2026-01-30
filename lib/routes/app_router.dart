@@ -1,3 +1,4 @@
+import 'package:abo_abed_clothing/screens/auth/login_screen.dart';
 import 'package:abo_abed_clothing/screens/auth/create_account_screen.dart';
 import 'package:abo_abed_clothing/screens/introduction/intro_screen.dart';
 import 'package:abo_abed_clothing/screens/none.dart';
@@ -20,7 +21,7 @@ class AppPages {
   static final routes = [
     GetPage(
       name: Routes.LOGIN,
-      page: () => const None(),
+      page: () => const LoginScreen(),
       transition: Transition.fadeIn,
     ),
     GetPage(

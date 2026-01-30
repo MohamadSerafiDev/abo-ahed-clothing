@@ -1,70 +1,93 @@
+import 'dart:convert';
 import 'package:abo_abed_clothing/core/storage_service.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class ApiService extends GetConnect implements GetxService {
-  final storage = Get.find<StorageService>();
+class ApiService {
+  final StorageService storage;
+  final Function(int statusCode)? onUnauthorized;
+
+  ApiService({required this.storage, this.onUnauthorized});
 
   // Base URL for Abu Ahed Backend
-  final String baseUrlAddress = "https://api.abuahed.com/v1";
+  final String baseUrl = "http://127.0.0.1/v1";
 
-  @override
-  void onInit() {
-    baseUrl = baseUrlAddress;
-
-    // 1. Request Modifier: Automatically add Token to every request
-    httpClient.addRequestModifier<dynamic>((request) {
-      final token = storage.getToken();
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-      request.headers['Accept'] = 'application/json';
-      return request;
-    });
-
-    // 2. Response Modifier: Handle global errors (like 401 Unauthorized)
-    httpClient.addResponseModifier((request, response) {
-      if (response.statusCode == 401) {
-        // Token expired? Clear storage and go to login
-        storage.logout();
-        Get.offAllNamed('/login');
-      }
-      return response;
-    });
-
-    super.onInit();
+  Map<String, String> _getHeaders() {
+    final token = storage.getToken();
+    return {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
   }
 
   // --- STANDARD OPERATIONS ---
 
   // GET Request
-  Future<Response> getRequest(String endpoint) async {
-    return await get(endpoint);
+  Future<http.Response> getRequest(String endpoint) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+    );
+    return _handleResponse(response);
   }
 
   // POST Request
-  Future<Response> postRequest(String endpoint, dynamic data) async {
-    return await post(endpoint, data);
+  Future<http.Response> postRequest(String endpoint, dynamic data) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
   }
 
   // PUT Request
-  Future<Response> putRequest(String endpoint, dynamic data) async {
-    return await put(endpoint, data);
+  Future<http.Response> putRequest(String endpoint, dynamic data) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
   }
 
   // DELETE Request
-  Future<Response> deleteRequest(String endpoint) async {
-    return await delete(endpoint);
+  Future<http.Response> deleteRequest(String endpoint) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+    );
+    return _handleResponse(response);
   }
 
-  // SPECIAL: Multipart Post (For your Receipt Upload)
-  Future<Response> uploadReceipt(
+  // Handle Response (Global Error Handling)
+  http.Response _handleResponse(http.Response response) {
+    if (response.statusCode == 401) {
+      if (onUnauthorized != null) {
+        onUnauthorized!(response.statusCode);
+      }
+    }
+    return response;
+  }
+
+  // SPECIAL: Multipart Post (For Receipt Upload)
+  Future<http.Response> uploadReceipt(
     String endpoint,
     List<int> imageBytes,
     String fileName,
   ) async {
-    final form = FormData({
-      'receipt': MultipartFile(imageBytes, filename: fileName),
-    });
-    return await post(endpoint, form);
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl$endpoint'),
+    );
+    request.headers.addAll(_getHeaders());
+
+    request.files.add(
+      http.MultipartFile.fromBytes('receipt', imageBytes, filename: fileName),
+    );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    return _handleResponse(response);
   }
 }

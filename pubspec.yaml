@@ -31,8 +31,8 @@ dev_dependencies:
 flutter:
     uses-material-design: true
 
-assets:
-    - assets/images/
-    # If you have specific folders for icons or onboarding, add them too:
-    # - assets/icons/
-    # - assets/onboarding/
+    assets:
+        - assets/images/
+          # If you have specific folders for icons or onboarding, add them too:
+        # - assets/icons/
+        # - assets/onboarding/

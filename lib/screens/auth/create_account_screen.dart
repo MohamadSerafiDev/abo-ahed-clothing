@@ -1,8 +1,16 @@
 import 'package:abo_abed_clothing/blocs/create_account/create_account_cubit.dart';
+import 'package:abo_abed_clothing/blocs/create_account/create_account_state.dart';
+import 'package:abo_abed_clothing/core/apis/user_api.dart';
+import 'package:abo_abed_clothing/core/services/api_service.dart';
+import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
 import 'package:abo_abed_clothing/core/utils/text_styles.dart';
+import 'package:abo_abed_clothing/core/utils/validators.dart';
+import 'package:abo_abed_clothing/screens/auth/login_screen.dart';
+import 'package:abo_abed_clothing/widgets/auth/auth_header.dart';
 import 'package:abo_abed_clothing/widgets/global/custom_input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -13,7 +21,9 @@ class CreateAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CreateAccountCubit(),
+      create: (context) => CreateAccountCubit(
+        UserApi(ApiService(storage: Get.find<StorageService>())),
+      ),
       child: const _CreateAccountView(),
     );
   }
@@ -31,6 +41,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -43,6 +54,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
 
   @override
   Widget build(BuildContext context) {
+    final staggerDelay = 100.ms;
     return Scaffold(
       backgroundColor: AppLightTheme.backgroundWhite,
       body: SafeArea(
@@ -52,131 +64,107 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
             children: [
               const SizedBox(height: 32),
               // Header / Logo Section
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: AppLightTheme.backgroundWhite,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppLightTheme.dividerColor),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.amber[100]!),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        FontAwesomeIcons.gem, // Approximating DiamondIcon
-                        color: AppLightTheme.goldPrimary,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'أبو عهد',
-                style: TextStyles.headlineMedium(isDark: false).copyWith(
-                  color: AppLightTheme.goldPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'إنشاء حساب',
-                style: TextStyles.displayLarge(isDark: false).copyWith(
-                  color: AppLightTheme.textHeadline,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'انضم إلى السوق المتميز للأزياء الحصرية',
-                style: TextStyles.bodyLarge(isDark: false).copyWith(
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 40),
+              AuthHeader(),
 
               // Form Section
-              CustomInput(
-                label: 'الاسم',
-                placeholder: 'محمد أحمد',
-                controller: _nameController,
-              ),
-              CustomInput(
-                label: 'رقم الهاتف',
-                placeholder: '+971 50 000 0000',
-                keyboardType: TextInputType.phone,
-                controller: _phoneController,
-              ),
-              CustomInput(
-                label: 'العنوان',
-                placeholder: 'الشارع، المدينة، الدولة',
-                icon: FontAwesomeIcons.locationDot,
-                controller: _addressController,
-              ),
-              CustomInput(
-                label: 'كلمة المرور',
-                placeholder: '••••••••',
-                isPassword: true,
-                controller: _passwordController,
-              ),
+              Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        CustomInput(
+                          label: 'name'.tr,
+                          placeholder: 'name_placeholder'.tr,
+                          controller: _nameController,
+                          validator: (v) =>
+                              Validators.validateRequired(v, 'name'.tr),
+                        ),
+                        CustomInput(
+                          label: 'phone_number'.tr,
+                          placeholder: '+971 50 000 0000',
+                          keyboardType: TextInputType.phone,
+                          controller: _phoneController,
+                          validator: Validators.validatePhone,
+                        ),
+                        CustomInput(
+                          label: 'address'.tr,
+                          placeholder: 'address_placeholder'.tr,
+                          icon: FontAwesomeIcons.locationDot,
+                          controller: _addressController,
+                          validator: (v) =>
+                              Validators.validateRequired(v, 'address'.tr),
+                        ),
+                        CustomInput(
+                          label: 'password'.tr,
+                          placeholder: 'password_placeholder'.tr,
+                          isPassword: true,
+                          controller: _passwordController,
+                          validator: (v) =>
+                              Validators.validateRequired(v, 'password'.tr),
+                        ),
+                      ],
+                    ),
+                  )
+                  .animate(delay: staggerDelay)
+                  .fadeIn(delay: 600.ms)
+                  .slideY(begin: 0.1, end: 0),
 
               const SizedBox(height: 16),
 
               // Action Button
-              SizedBox(
-                width: double.infinity,
-                height: 64,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final cubit = context.read<CreateAccountCubit>();
-                    cubit.createAccount(
-                      name: _nameController.text,
-                      phone: _phoneController.text,
-                      address: _addressController.text,
-                      password: _passwordController.text,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppLightTheme.goldPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
+              BlocConsumer<CreateAccountCubit, CreateAccountState>(
+                    listener: (context, state) {
+                      if (state is CreateAccountSuccess) {
+                        Get.offAllNamed('/home');
+                      } else if (state is CreateAccountFailure) {
+                        Get.snackbar(
+                          'Error',
+                          state.error,
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomGoldElevatedButton(
+                        onPressed: state is CreateAccountLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  final cubit = context
+                                      .read<CreateAccountCubit>();
+                                  cubit.createAccount(
+                                    name: _nameController.text,
+                                    phone: _phoneController.text,
+                                    address: _addressController.text,
+                                    password: _passwordController.text,
+                                  );
+                                }
+                              },
+                        isLoading: state is CreateAccountLoading,
+                        child: Text(
+                          'register'.tr,
+                          style: TextStyles.buttonText.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                  .animate(delay: 1100.ms)
+                  .fadeIn()
+                  .scale(begin: const Offset(0.9, 0.9))
+                  .shimmer(
+                    blendMode: BlendMode.srcOver,
+                    color: const Color.fromARGB(119, 255, 255, 255),
                   ),
-                  child: Text(
-                    'تسجيل',
-                    style: TextStyles.buttonText.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
 
               const SizedBox(height: 40),
 
-              // Footer Links
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'لديك حساب بالفعل؟ ',
+                    'already_have_account'.tr,
                     style: TextStyles.bodyMedium(isDark: false).copyWith(
                       color: Colors.grey[500],
                       fontWeight: FontWeight.w500,
@@ -184,10 +172,10 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Get.toNamed('/login'); // Assuming login route exists
+                      Get.toNamed('/login');
                     },
                     child: Text(
-                      'تسجيل الدخول',
+                      'login'.tr,
                       style: TextStyles.bodyMedium(isDark: false).copyWith(
                         color: AppLightTheme.goldPrimary,
                         fontWeight: FontWeight.bold,
@@ -195,18 +183,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'من خلال إنشاء حساب، فإنك توافق على\nشروط الخدمة و سياسة الخصوصية في أبو عهد',
-                textAlign: TextAlign.center,
-                style: TextStyles.labelGold.copyWith(
-                  fontSize: 12,
-                  color: Colors.grey[400],
-                  height: 1.5,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              ).animate(delay: 1300.ms).fadeIn(),
               const SizedBox(height: 24),
             ],
           ),

@@ -8,6 +8,7 @@ class StorageService extends GetxService {
   static const String _tokenKey = 'auth_token';
   static const String _roleKey = 'user_role'; // e.g., 'admin' or 'customer'
   static const String _isLoggedInKey = 'is_logged_in';
+  static const String _isFirstTimeKey = 'is_first_time';
 
   // This is called when the app starts
   Future<StorageService> init() async {
@@ -32,6 +33,13 @@ class StorageService extends GetxService {
 
   // --- Status Checks ---
   bool isLoggedIn() => _prefs.getBool(_isLoggedInKey) ?? false;
+
+  // --- Onboarding Check ---
+  Future<void> setFirstTime(bool value) async {
+    await _prefs.setBool(_isFirstTimeKey, value);
+  }
+
+  bool isFirstTime() => _prefs.getBool(_isFirstTimeKey) ?? true;
 
   // --- Clear Storage (Logout) ---
   Future<void> logout() async {
