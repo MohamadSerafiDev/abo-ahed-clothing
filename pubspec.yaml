@@ -1,0 +1,38 @@
+name: abo_abed_clothing
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+    sdk: ^3.10.4
+
+dependencies:
+    badges: ^3.1.2
+    dotted_border: ^3.1.0
+    flutter:
+        sdk: flutter
+    flutter_animate: ^4.5.2
+    flutter_bloc: ^9.1.1
+    flutter_staggered_grid_view: ^0.7.0
+    font_awesome_flutter: ^10.12.0
+    get: ^4.7.3
+    go_router: ^17.0.1
+    google_fonts: ^8.0.0
+    http: ^1.6.0
+    image_picker: ^1.2.1
+    introduction_screen: ^4.0.0
+    shared_preferences: ^2.5.4
+
+dev_dependencies:
+    flutter_lints: ^6.0.0
+    flutter_test:
+        sdk: flutter
+
+flutter:
+    uses-material-design: true
+
+assets:
+    - assets/images/
+    # If you have specific folders for icons or onboarding, add them too:
+    # - assets/icons/
+    # - assets/onboarding/
