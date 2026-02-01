@@ -23,6 +23,7 @@ class CreateAccountScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => CreateAccountCubit(
         UserApi(ApiService(storage: Get.find<StorageService>())),
+        Get.find<StorageService>(),
       ),
       child: const _CreateAccountView(),
     );
@@ -41,6 +42,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -49,6 +51,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
     _phoneController.dispose();
     _addressController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -64,7 +67,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
             children: [
               const SizedBox(height: 32),
               // Header / Logo Section
-              AuthHeader(),
+              AuthHeader(isLogin: false),
 
               // Form Section
               Form(
@@ -101,6 +104,17 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                           validator: (v) =>
                               Validators.validateRequired(v, 'password'.tr),
                         ),
+                        CustomInput(
+                          label: 'confirm_password'.tr,
+                          placeholder: 'confirm_password_placeholder'.tr,
+                          isPassword: true,
+                          controller: _confirmPasswordController,
+                          validator: (v) => Validators.validateConfirmPassword(
+                            v,
+                            _passwordController.text,
+                            'confirm_password'.tr,
+                          ),
+                        ),
                       ],
                     ),
                   )
@@ -114,7 +128,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
               BlocConsumer<CreateAccountCubit, CreateAccountState>(
                     listener: (context, state) {
                       if (state is CreateAccountSuccess) {
-                        Get.offAllNamed('/home');
+                        Get.offAllNamed('/login');
                       } else if (state is CreateAccountFailure) {
                         Get.snackbar(
                           'Error',

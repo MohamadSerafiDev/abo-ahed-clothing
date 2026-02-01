@@ -27,6 +27,8 @@ const Map<String, String> ar = {
   'address_placeholder': 'الشارع، المدينة، الدولة',
   'password': 'كلمة المرور',
   'password_placeholder': '••••••••',
+  'confirm_password': 'تأكيد كلمة المرور',
+  'confirm_password_placeholder': '••••••••',
   'register': 'تسجيل',
   'already_have_account': 'لديك حساب بالفعل؟ ',
   'no_account': 'ليس لديك حساب؟ ',
@@ -37,6 +39,7 @@ const Map<String, String> ar = {
   'is_required': 'مطلوب',
   'login_failed': 'فشل تسجيل الدخول',
   'signup_failed': 'فشل إنشاء الحساب',
+  'passwords_do_not_match': 'كلمات المرور غير متطابقة',
 
   // Categories
   'men': 'رجالي',

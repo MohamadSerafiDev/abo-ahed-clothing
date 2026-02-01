@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:abo_abed_clothing/screens/auth/login_screen.dart';
 import 'package:abo_abed_clothing/screens/auth/create_account_screen.dart';
 import 'package:abo_abed_clothing/screens/introduction/intro_screen.dart';
@@ -42,7 +44,7 @@ class AppPages {
     GetPage(
       name: Routes.PAYMENT_PROOF,
       page: () => const None(),
-      transition: Transition.downToUp, // Good for a "modal" feel
+      transition: Transition.downToUp,
     ),
     GetPage(
       name: Routes.CREATE_ACCOUNT,

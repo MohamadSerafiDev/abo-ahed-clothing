@@ -20,8 +20,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          LoginCubit(UserApi(ApiService(storage: Get.find<StorageService>()))),
+      create: (context) => LoginCubit(
+        UserApi(ApiService(storage: Get.find<StorageService>())),
+        Get.find<StorageService>(),
+      ),
       child: const _LoginView(),
     );
   }
@@ -59,7 +61,7 @@ class _LoginViewState extends State<_LoginView> {
               children: [
                 const SizedBox(height: 32),
                 // Header / Logo Section
-                AuthHeader(),
+                AuthHeader(isLogin: true),
 
                 Column(
                       children: [

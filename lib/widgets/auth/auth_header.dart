@@ -6,7 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader({super.key});
+  const AuthHeader({super.key, required this.isLogin});
+  final bool isLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +58,7 @@ class AuthHeader extends StatelessWidget {
         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
         const SizedBox(height: 32),
         Text(
-          'create_account_title'.tr,
+          isLogin ? 'login_title'.tr : 'create_account_title'.tr,
           style: TextStyles.displayLarge(isDark: false).copyWith(
             color: AppLightTheme.textHeadline,
             fontWeight: FontWeight.w800,

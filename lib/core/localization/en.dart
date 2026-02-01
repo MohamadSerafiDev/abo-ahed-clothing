@@ -27,6 +27,8 @@ const Map<String, String> en = {
   'address_placeholder': 'Street, City, Country',
   'password': 'Password',
   'password_placeholder': '••••••••',
+  'confirm_password': 'Confirm Password',
+  'confirm_password_placeholder': '••••••••',
   'register': 'Register',
   'already_have_account': 'Already have an account? ',
   'no_account': 'Don\'t have an account? ',
@@ -37,6 +39,7 @@ const Map<String, String> en = {
   'is_required': 'is required',
   'login_failed': 'Login failed',
   'signup_failed': 'Signup failed',
+  'passwords_do_not_match': 'Passwords do not match',
 
   // Categories
   'men': 'Men',

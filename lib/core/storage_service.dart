@@ -17,8 +17,9 @@ class StorageService extends GetxService {
   }
 
   // --- Token Operations ---
-  Future<void> saveToken(String token) async {
+  Future<void> saveToken(String token, String role) async {
     await _prefs.setString(_tokenKey, token);
+    await _prefs.setString(_roleKey, role);
     await _prefs.setBool(_isLoggedInKey, true);
   }
 

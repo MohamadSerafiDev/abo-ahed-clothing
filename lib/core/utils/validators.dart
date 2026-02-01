@@ -26,4 +26,14 @@ class Validators {
     }
     return null;
   }
+
+  static String? validateConfirmPassword(String? value, String password, String fieldName) {
+    if (value == null || value.isEmpty) {
+      return '$fieldName ${'is_required'.tr}';
+    }
+    if (value != password) {
+      return 'passwords_do_not_match'.tr;
+    }
+    return null;
+  }
 }

@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = Get.find<StorageService>();
-    log(storage.isFirstTime().toString());
+    // log(storage.isFirstTime().toString());
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -33,7 +33,9 @@ class MainApp extends StatelessWidget {
       // Routing
       initialRoute: storage.isFirstTime()
           ? Routes.INTRO
-          : Routes.CREATE_ACCOUNT,
+          : storage.isLoggedIn()
+          ? Routes.HOME
+          : Routes.LOGIN,
       getPages: AppPages.routes,
     );
   }
