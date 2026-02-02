@@ -8,40 +8,28 @@ class UserApi {
 
   UserApi(this._apiService);
 
-  Future<Map<String, dynamic>> login({
+  Future<dynamic> login({
     required String phone,
     required String password,
   }) async {
-    try {
-      final response = await _apiService.postRequest(ApiLinks.logIn, {
-        'phone': phone,
-        'password': password,
-      });
-
-      return jsonDecode(response.body);
-    } on ServerException catch (e) {
-      return {'error': jsonDecode(e.message)['error'] ?? 'Server error'};
-    } on ClientException catch (e) {
-      return {'error': jsonDecode(e.message)['error'] ?? 'Client error'};
-    } on NetworkException catch (e) {
-      return {'error': e.message};
-    } catch (e) {
-      return {'error': 'An unexpected error occurred.'};
+    final response = await _apiService.postRequest(ApiLinks.logIn, {
+      'phone': phone,
+      'password': password,
+    });
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return response.data;
+    } else {
+      return Future.error(response.error ?? 'Unknown error');
     }
   }
 
-  Future<Map<String, dynamic>> signup(Map<String, dynamic> data) async {
-    try {
-      final response = await _apiService.postRequest(ApiLinks.signUp, data);
-      return jsonDecode(response.body);
-    } on ServerException catch (e) {
-      return {'error': jsonDecode(e.message)['error'] ?? 'Server error'};
-    } on ClientException catch (e) {
-      return {'error': jsonDecode(e.message)['error'] ?? 'Client error'};
-    } on NetworkException catch (e) {
-      return {'error': e.message};
-    } catch (e) {
-      return {'error': 'An unexpected error occurred.'};
+  Future<dynamic> signup(Map<String, dynamic> data) async {
+    final response = await _apiService.postRequest(ApiLinks.signUp, data);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return response.data;
+    } else {
+      return Future.error(response.error ?? 'Unknown error');
     }
   }
 }

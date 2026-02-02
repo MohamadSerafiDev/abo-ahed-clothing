@@ -23,7 +23,6 @@ class CreateAccountScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => CreateAccountCubit(
         UserApi(ApiService(storage: Get.find<StorageService>())),
-        Get.find<StorageService>(),
       ),
       child: const _CreateAccountView(),
     );

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
-import 'package:abo_abed_clothing/core/errors/exceptions.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +12,7 @@ class ApiService {
 
   // Base URL for Abu Ahed Backend
   final String baseUrl = "http://192.168.59.55:5000/api";
-  final Duration _timeout = const Duration(minutes: 1);
+  final Duration _timeout = const Duration(seconds: 45);
 
   Map<String, String> _getHeaders() {
     final token = storage.getToken();
@@ -28,23 +26,27 @@ class ApiService {
   // --- STANDARD OPERATIONS ---
 
   // GET Request
-  Future<http.Response> getRequest(String endpoint) async {
+  Future<ApiResponse> getRequest(String endpoint) async {
     try {
       final response = await http
           .get(Uri.parse('$baseUrl$endpoint'), headers: _getHeaders())
           .timeout(_timeout);
       return _handleResponse(response);
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please try again.');
     } on SocketException {
-      throw NetworkException('No internet connection.');
-    } on http.ClientException catch (e) {
-      throw ClientException('A client error occurred: ${e.message}');
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
 
   // POST Request
-  Future<http.Response> postRequest(String endpoint, dynamic data) async {
+  Future<ApiResponse> postRequest(String endpoint, dynamic data) async {
     try {
       final response = await http
           .post(
@@ -53,19 +55,23 @@ class ApiService {
             body: jsonEncode(data),
           )
           .timeout(_timeout);
-      log(response.body);
+      // log(response.body);
       return _handleResponse(response);
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please try again.');
     } on SocketException {
-      throw NetworkException('No internet connection.');
-    } on http.ClientException catch (e) {
-      throw ClientException('A client error occurred: ${e.message}');
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
 
   // PUT Request
-  Future<http.Response> putRequest(String endpoint, dynamic data) async {
+  Future<ApiResponse> putRequest(String endpoint, dynamic data) async {
     try {
       final response = await http
           .put(
@@ -75,51 +81,76 @@ class ApiService {
           )
           .timeout(_timeout);
       return _handleResponse(response);
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please try again.');
     } on SocketException {
-      throw NetworkException('No internet connection.');
-    } on http.ClientException catch (e) {
-      throw ClientException('A client error occurred: ${e.message}');
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
 
   // DELETE Request
-  Future<http.Response> deleteRequest(String endpoint) async {
+  Future<ApiResponse> deleteRequest(String endpoint) async {
     try {
       final response = await http
           .delete(Uri.parse('$baseUrl$endpoint'), headers: _getHeaders())
           .timeout(_timeout);
       return _handleResponse(response);
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please try again.');
     } on SocketException {
-      throw NetworkException('No internet connection.');
-    } on http.ClientException catch (e) {
-      throw ClientException('A client error occurred: ${e.message}');
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
 
   // Handle Response (Global Error Handling)
-  http.Response _handleResponse(http.Response response) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response;
-    } else if (response.statusCode == 401) {
-      if (onUnauthorized != null) {
-        onUnauthorized!(response.statusCode);
+  ApiResponse _handleResponse(http.Response response) {
+    try {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        return ApiResponse(statusCode: response.statusCode, data: data);
+      } else {
+        if (response.statusCode == 401) {
+          if (onUnauthorized != null) {
+            onUnauthorized!(response.statusCode);
+
+            return ApiResponse(
+              statusCode: 401,
+              data: jsonDecode(response.body),
+              error: 'Unauthorized',
+            );
+          }
+        }
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final error = data['error'] ?? data['message'] ?? 'Unknown error';
+        return ApiResponse(
+          statusCode: response.statusCode,
+          data: data,
+          error: error,
+        );
       }
-      throw ServerException(response.body);
-    } else if (response.statusCode >= 400 && response.statusCode < 500) {
-      throw ClientException(response.body);
-    } else if (response.statusCode >= 500) {
-      throw ServerException(response.body);
-    } else {
-      return response;
+    } catch (e) {
+      return ApiResponse(
+        statusCode: response.statusCode,
+        data: {},
+        error: e.toString(),
+      );
     }
   }
 
   // SPECIAL: Multipart Post (For Receipt Upload)
-  Future<http.Response> uploadReceipt(
+  Future<ApiResponse> uploadReceipt(
     String endpoint,
     List<int> imageBytes,
     String fileName,
@@ -138,12 +169,24 @@ class ApiService {
       final streamedResponse = await request.send().timeout(_timeout);
       final response = await http.Response.fromStream(streamedResponse);
       return _handleResponse(response);
-    } on TimeoutException {
-      throw NetworkException('Request timed out. Please try again.');
     } on SocketException {
-      throw NetworkException('No internet connection.');
-    } on http.ClientException catch (e) {
-      throw ClientException('A client error occurred: ${e.message}');
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
+}
+
+class ApiResponse<T> {
+  final int statusCode;
+  final T data;
+  final String? error;
+
+  ApiResponse({required this.statusCode, required this.data, this.error});
 }

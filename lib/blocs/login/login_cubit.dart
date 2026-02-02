@@ -1,10 +1,8 @@
 import 'dart:developer';
 
 import 'package:abo_abed_clothing/core/apis/user_api.dart';
-import 'package:abo_abed_clothing/core/errors/exceptions.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -31,11 +29,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       emit(LoginSuccess());
     } catch (e) {
-      emit(
-        LoginFailure(
-          'An unexpected error occurred during token/role saving: ${e.toString()}',
-        ),
-      );
+      emit(LoginFailure('unexpected error : ${e.toString()}'));
     }
   }
 }
