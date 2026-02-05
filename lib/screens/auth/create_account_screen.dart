@@ -1,6 +1,6 @@
-import 'package:abo_abed_clothing/blocs/create_account/create_account_cubit.dart';
-import 'package:abo_abed_clothing/blocs/create_account/create_account_state.dart';
-import 'package:abo_abed_clothing/core/apis/user_api.dart';
+import 'package:abo_abed_clothing/blocs/login/auth_cubit.dart';
+import 'package:abo_abed_clothing/blocs/login/auth_state.dart';
+import 'package:abo_abed_clothing/core/apis/user/user_api.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
@@ -20,12 +20,7 @@ class CreateAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CreateAccountCubit(
-        UserApi(ApiService(storage: Get.find<StorageService>())),
-      ),
-      child: const _CreateAccountView(),
-    );
+    return const _CreateAccountView();
   }
 }
 
@@ -124,11 +119,11 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
               const SizedBox(height: 16),
 
               // Action Button
-              BlocConsumer<CreateAccountCubit, CreateAccountState>(
+              BlocConsumer<AuthCubit, AuthState>(
                     listener: (context, state) {
-                      if (state is CreateAccountSuccess) {
+                      if (state is AuthSuccess) {
                         Get.offAllNamed('/login');
-                      } else if (state is CreateAccountFailure) {
+                      } else if (state is AuthFailure) {
                         Get.snackbar(
                           'Error',
                           state.error,
@@ -138,13 +133,12 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                     },
                     builder: (context, state) {
                       return CustomGoldElevatedButton(
-                        onPressed: state is CreateAccountLoading
+                        onPressed: state is AuthLoading
                             ? null
                             : () {
                                 if (_formKey.currentState!.validate()) {
-                                  final cubit = context
-                                      .read<CreateAccountCubit>();
-                                  cubit.createAccount(
+                                  final cubit = context.read<AuthCubit>();
+                                  cubit.signup(
                                     name: _nameController.text,
                                     phone: _phoneController.text,
                                     address: _addressController.text,
@@ -152,7 +146,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                                   );
                                 }
                               },
-                        isLoading: state is CreateAccountLoading,
+                        isLoading: state is AuthLoading,
                         child: Text(
                           'register'.tr,
                           style: TextStyles.buttonText.copyWith(

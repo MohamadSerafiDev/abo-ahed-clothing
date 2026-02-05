@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:abo_abed_clothing/core/api_links.dart';
-import 'package:abo_abed_clothing/core/errors/exceptions.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
 
 class UserApi {
@@ -12,7 +11,7 @@ class UserApi {
     required String phone,
     required String password,
   }) async {
-    final response = await _apiService.postRequest(ApiLinks.logIn, {
+    final response = await _apiService.postRequest(ApiLinks.login, {
       'phone': phone,
       'password': password,
     });

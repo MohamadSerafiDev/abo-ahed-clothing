@@ -1,6 +1,6 @@
-import 'package:abo_abed_clothing/blocs/login/login_cubit.dart';
-import 'package:abo_abed_clothing/blocs/login/login_state.dart';
-import 'package:abo_abed_clothing/core/apis/user_api.dart';
+import 'package:abo_abed_clothing/blocs/login/auth_cubit.dart';
+import 'package:abo_abed_clothing/blocs/login/auth_state.dart';
+import 'package:abo_abed_clothing/core/apis/user/user_api.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
@@ -11,7 +11,6 @@ import 'package:abo_abed_clothing/widgets/global/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -19,13 +18,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LoginCubit(
-        UserApi(ApiService(storage: Get.find<StorageService>())),
-        Get.find<StorageService>(),
-      ),
-      child: const _LoginView(),
-    );
+    return const _LoginView();
   }
 }
 
@@ -88,11 +81,11 @@ class _LoginViewState extends State<_LoginView> {
 
                 const SizedBox(height: 32),
 
-                BlocConsumer<LoginCubit, LoginState>(
+                BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) {
-                        if (state is LoginSuccess) {
+                        if (state is AuthSuccess) {
                           Get.offAllNamed('/home'); // Or dashboard
-                        } else if (state is LoginFailure) {
+                        } else if (state is AuthFailure) {
                           Get.snackbar(
                             'Error',
                             state.error,
@@ -102,17 +95,17 @@ class _LoginViewState extends State<_LoginView> {
                       },
                       builder: (context, state) {
                         return CustomGoldElevatedButton(
-                          onPressed: state is LoginLoading
+                          onPressed: state is AuthLoading
                               ? null
                               : () {
                                   if (_formKey.currentState!.validate()) {
-                                    context.read<LoginCubit>().login(
+                                    context.read<AuthCubit>().login(
                                       phone: _phoneController.text,
                                       password: _passwordController.text,
                                     );
                                   }
                                 },
-                          isLoading: state is LoginLoading,
+                          isLoading: state is AuthLoading,
                           child: Text(
                             'login'.tr,
                             style: TextStyles.buttonText.copyWith(

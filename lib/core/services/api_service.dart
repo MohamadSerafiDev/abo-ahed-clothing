@@ -94,6 +94,30 @@ class ApiService {
     }
   }
 
+  // PATCH Request
+  Future<ApiResponse> patchRequest(String endpoint, dynamic data) async {
+    try {
+      final response = await http
+          .patch(
+            Uri.parse('$baseUrl$endpoint'),
+            headers: _getHeaders(),
+            body: jsonEncode(data),
+          )
+          .timeout(_timeout);
+      return _handleResponse(response);
+    } on SocketException {
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
+    }
+  }
+
   // DELETE Request
   Future<ApiResponse> deleteRequest(String endpoint) async {
     try {
