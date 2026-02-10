@@ -54,6 +54,14 @@ const Map<String, String> en = {
   'price': 'Price',
   'total': 'Total',
   'cart_empty': 'Your cart is empty',
+  'description': 'Description',
+  'only_x_left_in_stock': 'Only @count left in stock!',
+  'out_of_stock': 'Out of Stock',
+  'new': 'New',
+  'used': 'Used',
+  'success': 'Success',
+  'error': 'Error',
+  'retry': 'Retry',
 
   // Payment Flow
   'payment_method': 'Bank Transfer',

@@ -30,7 +30,16 @@ class ProductApi {
       );
 
       if (response.statusCode == 200) {
-        return ProductModel.fromJson(response.data['product']);
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('product') && data['product'] != null) {
+            return ProductModel.fromJson(data['product']);
+          } else if (data.containsKey('_id') || data.containsKey('id')) {
+            // Fallback: the product is at the root
+            return ProductModel.fromJson(data);
+          }
+        }
+        throw Exception('Product data not found in response');
       } else {
         throw Exception(response.error ?? 'Failed to fetch product details');
       }
@@ -64,7 +73,15 @@ class ProductApi {
       final response = await _apiService.postRequest(ApiLinks.products, data);
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        return ProductModel.fromJson(response.data['product']);
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('product') && data['product'] != null) {
+            return ProductModel.fromJson(data['product']);
+          } else if (data.containsKey('_id') || data.containsKey('id')) {
+            return ProductModel.fromJson(data);
+          }
+        }
+        throw Exception('Product data not found in response');
       } else {
         throw Exception(response.error ?? 'Failed to create product');
       }
@@ -97,7 +114,15 @@ class ProductApi {
       );
 
       if (response.statusCode == 200) {
-        return ProductModel.fromJson(response.data['product']);
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('product') && data['product'] != null) {
+            return ProductModel.fromJson(data['product']);
+          } else if (data.containsKey('_id') || data.containsKey('id')) {
+            return ProductModel.fromJson(data);
+          }
+        }
+        throw Exception('Product data not found in response');
       } else {
         throw Exception(response.error ?? 'Failed to update product');
       }

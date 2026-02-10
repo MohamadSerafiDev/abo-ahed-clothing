@@ -13,7 +13,7 @@ class CartApi {
       final response = await _apiService.getRequest(ApiLinks.cart);
 
       if (response.statusCode == 200) {
-        return CartModel.fromJson(response.data['cart']);
+        return CartModel.fromJson(response.data);
       } else {
         throw Exception(response.error ?? 'Failed to fetch cart');
       }

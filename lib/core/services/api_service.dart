@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:http/http.dart' as http;
@@ -11,11 +12,12 @@ class ApiService {
   ApiService({required this.storage, this.onUnauthorized});
 
   // Base URL for Abu Ahed Backend
-  final String baseUrl = "http://192.168.59.55:5000/api";
+  final String baseUrl = "http://192.168.1.110:5000/api";
   final Duration _timeout = const Duration(seconds: 45);
 
   Map<String, String> _getHeaders() {
     final token = storage.getToken();
+    log(token.toString());
     return {
       'Accept': 'application/json',
       'Content-Type': 'application/json',

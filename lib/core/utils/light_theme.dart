@@ -45,7 +45,10 @@ ThemeData get lightTheme {
 
     // --- Backgrounds ---
     scaffoldBackgroundColor: AppLightTheme.backgroundWhite,
-
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) =>
+          const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
+    ),
     // --- App Bar Theme ---
     appBarTheme: const AppBarTheme(
       backgroundColor: AppLightTheme.backgroundWhite,

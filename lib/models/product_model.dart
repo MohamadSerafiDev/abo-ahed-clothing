@@ -52,7 +52,11 @@ class ProductModel {
       stock: json['stock'] ?? 0,
       mediaItems: json['mediaItems'] != null
           ? (json['mediaItems'] as List)
-                .map((item) => MediaItemModel.fromJson(item))
+                .where((item) => item != null)
+                .map(
+                  (item) =>
+                      MediaItemModel.fromJson(item as Map<String, dynamic>),
+                )
                 .toList()
           : [],
       createdAt: json['createdAt'] != null

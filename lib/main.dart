@@ -24,7 +24,7 @@ void main() async {
 
   // Initialize storage
   final storageService = await StorageService().init();
-
+  Get.put(storageService);
   // Initialize API service
   final apiService = ApiService(
     storage: storageService,
@@ -78,30 +78,39 @@ class MainApp extends StatelessWidget {
     final storage = Get.find<StorageService>();
     // log(storage.isFirstTime().toString());
 
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(create: (context) => AuthCubit(userApi, storageService)),
-        BlocProvider(create: (context) => ProductCubit(productService)),
-        BlocProvider(create: (context) => CartCubit(cartService)),
-        BlocProvider(create: (context) => OrderCubit(orderService)),
-        BlocProvider(create: (context) => ShippingCubit(shippingService)),
-        BlocProvider(
-          create: (context) => NotificationCubit(notificationService),
-        ),
+        RepositoryProvider.value(value: productService),
+        RepositoryProvider.value(value: cartService),
+        RepositoryProvider.value(value: orderService),
+        RepositoryProvider.value(value: shippingService),
+        RepositoryProvider.value(value: notificationService),
       ],
-      child: GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        translations: AppTranslations(),
-        locale: const Locale('ar', 'SA'),
-        fallbackLocale: const Locale('en', 'US'),
-        // Routing
-        initialRoute: storage.isFirstTime()
-            ? Routes.INTRO
-            : storage.isLoggedIn()
-            ? Routes.HOME
-            : Routes.LOGIN,
-        getPages: AppPages.routes,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => AuthCubit(userApi, storageService)),
+          BlocProvider(create: (context) => ProductCubit(productService)),
+          BlocProvider(create: (context) => CartCubit(cartService)),
+          BlocProvider(create: (context) => OrderCubit(orderService)),
+          BlocProvider(create: (context) => ShippingCubit(shippingService)),
+          BlocProvider(
+            create: (context) => NotificationCubit(notificationService),
+          ),
+        ],
+        child: GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: lightTheme,
+          translations: AppTranslations(),
+          locale: const Locale('ar', 'SA'),
+          fallbackLocale: const Locale('en', 'US'),
+          // Routing
+          initialRoute: storage.isFirstTime()
+              ? Routes.INTRO
+              : storage.isLoggedIn()
+              ? Routes.MAINHOME
+              : Routes.LOGIN,
+          getPages: AppPages.routes,
+        ),
       ),
     );
   }

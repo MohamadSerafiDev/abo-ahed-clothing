@@ -153,7 +153,7 @@ class _IntroScreenState extends State<IntroScreen> {
                           ),
                         ),
                       ),
-                    ).animate().fadeIn(delay: 600.ms),
+                    ).animate( delay: 500.ms).fadeIn(delay: 600.ms),
 
                     const SizedBox(height: 40),
 

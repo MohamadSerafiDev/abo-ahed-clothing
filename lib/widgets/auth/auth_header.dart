@@ -46,16 +46,19 @@ class AuthHeader extends StatelessWidget {
               ),
             ),
           ),
-        ).animate().fadeIn(duration: 600.ms).scale(delay: 0.ms),
+        ).animate(delay: 500.ms).fadeIn(duration: 600.ms).scale(delay: 0.ms),
         const SizedBox(height: 16),
 
         Text(
-          'store_name'.tr,
-          style: TextStyles.headlineMedium(isDark: false).copyWith(
-            color: AppLightTheme.goldPrimary,
-            fontWeight: FontWeight.bold,
-          ),
-        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.3, end: 0),
+              'store_name'.tr,
+              style: TextStyles.headlineMedium(isDark: false).copyWith(
+                color: AppLightTheme.goldPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+            .animate(delay: 500.ms)
+            .fadeIn(delay: 200.ms)
+            .slideY(begin: 0.3, end: 0),
         const SizedBox(height: 32),
         Text(
           isLogin ? 'login_title'.tr : 'create_account_title'.tr,
@@ -66,11 +69,14 @@ class AuthHeader extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'create_account_subtitle'.tr,
-          style: TextStyles.bodyLarge(
-            isDark: false,
-          ).copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
-        ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1, end: 0),
+              'create_account_subtitle'.tr,
+              style: TextStyles.bodyLarge(
+                isDark: false,
+              ).copyWith(color: Colors.grey[400], fontWeight: FontWeight.w500),
+            )
+            .animate(delay: 500.ms)
+            .fadeIn(delay: 400.ms)
+            .slideX(begin: 0.1, end: 0),
         const SizedBox(height: 40),
       ],
     );

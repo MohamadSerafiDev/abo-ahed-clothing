@@ -2,8 +2,10 @@
 
 import 'package:abo_abed_clothing/screens/auth/login_screen.dart';
 import 'package:abo_abed_clothing/screens/auth/create_account_screen.dart';
+import 'package:abo_abed_clothing/screens/home/main_home.dart';
 import 'package:abo_abed_clothing/screens/introduction/intro_screen.dart';
-import 'package:abo_abed_clothing/screens/none.dart';
+import 'package:abo_abed_clothing/screens/place_holder.dart';
+import 'package:abo_abed_clothing/screens/product/product_screen.dart';
 import 'package:get/get.dart';
 
 abstract class Routes {
@@ -11,6 +13,7 @@ abstract class Routes {
   static const INTRO = '/intro';
   static const LOGIN = '/login';
   static const HOME = '/home';
+  static const MAINHOME = '/main-home';
   static const PRODUCT_DETAILS = '/product-details';
   static const CART = '/cart';
   static const PAYMENT_PROOF = '/payment-proof';
@@ -37,8 +40,16 @@ class AppPages {
       transition: Transition.cupertino,
     ),
     GetPage(
+      name: Routes.MAINHOME,
+      page: () => const MainHome(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
       name: Routes.PRODUCT_DETAILS,
-      page: () => const None(),
+      page: () {
+        final productId = Get.parameters['productId'] ?? '';
+        return ProductScreen(productId: productId);
+      },
       transition: Transition.rightToLeftWithFade,
     ),
     GetPage(

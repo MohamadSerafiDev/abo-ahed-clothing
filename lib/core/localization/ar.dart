@@ -54,6 +54,11 @@ const Map<String, String> ar = {
   'price': 'السعر',
   'total': 'الإجمالي',
   'cart_empty': 'سلة المشتريات فارغة',
+  'description': 'الوصف',
+  'only_x_left_in_stock': 'فقط @count متبقي في المخزون!',
+  'out_of_stock': 'نفذت الكمية',
+  'success': 'نجح',
+  'error': 'خطأ',
 
   // Payment Flow
   'payment_method': 'تحويل بنكي',
@@ -61,4 +66,28 @@ const Map<String, String> ar = {
   'upload_proof_desc': 'يرجى رفع صورة من الحوالة البنكية لإكمال الطلب.',
   'submit_order': 'تأكيد الطلب',
   'order_success': 'تم إرسال الطلب بنجاح!',
+
+  // Home Screen
+  'home_title': 'أبو عهد',
+  'all_products': 'عرض الكل',
+  'new_arrivals': 'وصل حديثاً',
+  'rare_pieces': 'قطع نادرة',
+  'premium_brand': 'أبو عهد بريميوم',
+  'no_products_found': 'لم يتم العثور على قطع',
+  'show_all_products': 'عرض كل القطع',
+  'loading_products': 'جاري تحميل المنتجات...',
+  'error_loading_products': 'حدث خطأ أثناء تحميل المنتجات',
+  'retry': 'إعادة المحاولة',
+
+  // Categories
+  'summer': 'صيفي',
+  'autumn': 'خريفي',
+  'accessories': 'إكسسوارات',
+  'formal': 'رسمي',
+  'watches': 'ساعات',
+  'shoes': 'أحذية',
+
+  // Product Condition
+  'new': 'جديد',
+  'used': 'مستعمل',
 };
