@@ -63,6 +63,21 @@ const Map<String, String> en = {
   'error': 'Error',
   'retry': 'Retry',
 
+  // Cart Screen
+  'cart_title': 'My Cart',
+  'items_selected': 'Selected @count items',
+  'enter_coupon': 'Enter coupon code',
+  'apply': 'Apply',
+  'subtotal': 'Subtotal',
+  'shipping': 'Shipping',
+  'free': 'Free',
+  'tax_included': 'Tax included',
+  'continue_checkout': 'Continue to Checkout',
+  'secure_payment': 'Secure encrypted payment',
+  'cart_failed': 'Failed to load cart',
+  'start_shopping': 'Start shopping now',
+  'remove_item': 'Remove',
+
   // Payment Flow
   'payment_method': 'Bank Transfer',
   'upload_proof': 'Upload Payment Receipt',

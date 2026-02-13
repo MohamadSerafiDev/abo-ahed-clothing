@@ -18,6 +18,7 @@ class ApiService {
   Map<String, String> _getHeaders() {
     final token = storage.getToken();
     log(token.toString());
+    log(storage.getRole());
     return {
       'Accept': 'application/json',
       'Content-Type': 'application/json',

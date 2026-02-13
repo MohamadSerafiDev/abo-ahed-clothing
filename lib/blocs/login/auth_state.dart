@@ -1,3 +1,5 @@
+import 'package:abo_abed_clothing/models/user_model.dart';
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -18,3 +20,9 @@ class AuthFailure extends AuthState {
 }
 
 class AuthLoggedOut extends AuthState {}
+
+class AuthUserLoaded extends AuthState {
+  final UserModel user;
+
+  AuthUserLoaded(this.user);
+}

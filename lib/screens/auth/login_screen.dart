@@ -1,12 +1,12 @@
 import 'package:abo_abed_clothing/blocs/login/auth_cubit.dart';
 import 'package:abo_abed_clothing/blocs/login/auth_state.dart';
-import 'package:abo_abed_clothing/core/apis/user/user_api.dart';
-import 'package:abo_abed_clothing/core/services/api_service.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
 import 'package:abo_abed_clothing/core/utils/text_styles.dart';
 import 'package:abo_abed_clothing/core/utils/validators.dart';
+import 'package:abo_abed_clothing/routes/role_middleware.dart';
 import 'package:abo_abed_clothing/widgets/auth/auth_header.dart';
+import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
 import 'package:abo_abed_clothing/widgets/global/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -84,13 +84,11 @@ class _LoginViewState extends State<_LoginView> {
                 BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) {
                         if (state is AuthSuccess) {
-                          Get.offAllNamed('/home'); // Or dashboard
+                          final storage = Get.find<StorageService>();
+                          final route = getHomeRouteForRole(storage);
+                          Get.offAllNamed(route);
                         } else if (state is AuthFailure) {
-                          Get.snackbar(
-                            'Error',
-                            state.error,
-                            snackPosition: SnackPosition.BOTTOM,
-                          );
+                          AppSnackbar.showError(message: state.error);
                         }
                       },
                       builder: (context, state) {

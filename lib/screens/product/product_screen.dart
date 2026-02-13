@@ -10,6 +10,8 @@ import 'package:abo_abed_clothing/widgets/product/add_to_cart_button.dart';
 import 'package:abo_abed_clothing/widgets/product/low_stock_indicator.dart';
 import 'package:abo_abed_clothing/widgets/product/product_image_carousel.dart';
 import 'package:abo_abed_clothing/widgets/product/product_info_section.dart';
+import 'package:abo_abed_clothing/widgets/product/quantity_selector.dart';
+import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -47,6 +49,8 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
     'https://picsum.photos/200/300',
   ];
 
+  int _quantity = 1;
+
   @override
   void initState() {
     super.initState();
@@ -77,14 +81,42 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: AddToCartButton(
-                    product: product,
-                    onAddToCart: () {
-                      context.read<ProductCubit>().addToCart(
-                        productId: product!.id,
-                        quantity: 1,
-                      );
-                    },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        top: BorderSide(
+                          color: AppLightTheme.dividerColor,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        QuantitySelector(
+                          quantity: _quantity,
+                          maxQuantity: product.stock,
+                          onChanged: (val) {
+                            setState(() {
+                              _quantity = val;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: AddToCartButton(
+                            product: product,
+                            onAddToCart: () {
+                              context.read<ProductCubit>().addToCart(
+                                productId: product!.id,
+                                quantity: _quantity,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
             ],
@@ -96,24 +128,10 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
 
   void _onProductStateChanged(BuildContext context, ProductState state) {
     if (state is ProductAddedToCart) {
-      Get.snackbar(
-        'success'.tr,
-        state.message,
-        backgroundColor: AppLightTheme.goldPrimary,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
-      );
+      AppSnackbar.showSuccess(message: state.message);
+      Get.offAllNamed('/main-home');
     } else if (state is ProductFailure) {
-      Get.snackbar(
-        'error'.tr,
-        state.error,
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-      );
+      AppSnackbar.showError(message: state.error);
     }
   }
 
@@ -150,7 +168,7 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: LowStockIndicator(stock: product.stock),
               ),
-              const SizedBox(height: 150), // Spacer for fixed button
+              const SizedBox(height: 150),
             ],
           ),
         ),

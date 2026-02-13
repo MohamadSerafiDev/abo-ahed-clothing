@@ -40,6 +40,14 @@ const Map<String, String> ar = {
   'login_failed': 'فشل تسجيل الدخول',
   'signup_failed': 'فشل إنشاء الحساب',
   'passwords_do_not_match': 'كلمات المرور غير متطابقة',
+  'role': 'الدور',
+  'customer': 'زبون',
+  'admin': 'مدير',
+  'delivery': 'موصل',
+  'logout': 'تسجيل الخروج',
+
+  // Profile
+  'profile': 'الملف الشخصي',
 
   // Categories
   'men': 'رجالي',
@@ -90,4 +98,19 @@ const Map<String, String> ar = {
   // Product Condition
   'new': 'جديد',
   'used': 'مستعمل',
+
+  // Cart Screen
+  'cart_title': 'سلتي',
+  'items_selected': 'تم اختيار @count عناصر',
+  'enter_coupon': 'أدخل رمز القسيمة',
+  'apply': 'تطبيق',
+  'subtotal': 'المجموع الفرعي',
+  'shipping': 'الشحن',
+  'free': 'مجاني',
+  'tax_included': 'شامل الضريبة',
+  'continue_checkout': 'المتابعة للدفع',
+  'secure_payment': 'دفع آمن ومشفر',
+  'cart_failed': 'فشل تحميل السلة',
+  'start_shopping': 'ابدأ التسوق الآن',
+  'remove_item': 'حذف',
 };

@@ -5,6 +5,7 @@ import 'package:abo_abed_clothing/core/utils/text_styles.dart';
 import 'package:abo_abed_clothing/core/utils/validators.dart';
 import 'package:abo_abed_clothing/screens/auth/login_screen.dart';
 import 'package:abo_abed_clothing/widgets/auth/auth_header.dart';
+import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
 import 'package:abo_abed_clothing/widgets/global/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -121,11 +122,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                       if (state is AuthSuccess) {
                         Get.offAllNamed('/login');
                       } else if (state is AuthFailure) {
-                        Get.snackbar(
-                          'Error',
-                          state.error,
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
+                        AppSnackbar.showError(message: state.error);
                       }
                     },
                     builder: (context, state) {

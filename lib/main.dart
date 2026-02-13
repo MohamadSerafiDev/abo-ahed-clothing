@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_abed_clothing/blocs/cart/cart_cubit.dart';
 import 'package:abo_abed_clothing/blocs/login/auth_cubit.dart';
 import 'package:abo_abed_clothing/blocs/notification/notification_cubit.dart';
@@ -15,6 +17,7 @@ import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:abo_abed_clothing/core/localization/app_translations.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
 import 'package:abo_abed_clothing/routes/app_router.dart';
+import 'package:abo_abed_clothing/routes/role_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -76,7 +79,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = Get.find<StorageService>();
-    // log(storage.isFirstTime().toString());
+    log(storage.isFirstTime().toString(), name: 'is first time');
 
     return MultiRepositoryProvider(
       providers: [
@@ -107,7 +110,7 @@ class MainApp extends StatelessWidget {
           initialRoute: storage.isFirstTime()
               ? Routes.INTRO
               : storage.isLoggedIn()
-              ? Routes.MAINHOME
+              ? getHomeRouteForRole(storage)
               : Routes.LOGIN,
           getPages: AppPages.routes,
         ),

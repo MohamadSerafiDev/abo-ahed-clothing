@@ -8,7 +8,9 @@ class ApiLinks {
 
   // ==================== AUTH ENDPOINTS ====================
   static const String login = '/auth/login';
+  static const String logout = '/auth/logout';
   static const String signUp = '/auth/signup';
+  static const String userInfo = '/auth/me';
 
   // ==================== PRODUCT ENDPOINTS ====================
   static const String products = '/products';

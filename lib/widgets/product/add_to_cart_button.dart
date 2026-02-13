@@ -15,26 +15,20 @@ class AddToCartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: .all(20),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: product.isInStock ? onAddToCart : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppLightTheme.goldPrimary,
-          disabledBackgroundColor: AppLightTheme.dividerColor,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          product.isInStock ? 'add_to_cart'.tr : 'out_of_stock'.tr,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+    return ElevatedButton(
+      onPressed: product.isInStock ? onAddToCart : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppLightTheme.goldPrimary,
+        disabledBackgroundColor: AppLightTheme.dividerColor,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: Text(
+        product.isInStock ? 'add_to_cart'.tr : 'out_of_stock'.tr,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
         ),
       ),
     );

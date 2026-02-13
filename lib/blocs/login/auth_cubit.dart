@@ -66,6 +66,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     emit(AuthLoading());
     try {
+      await _userApi.logout();
       await _storageService.logout();
       emit(AuthLoggedOut());
     } catch (e) {
@@ -81,6 +82,17 @@ class AuthCubit extends Cubit<AuthState> {
   /// Get current user role
   String getUserRole() {
     return _storageService.getRole();
+  }
+
+  /// Get current user information
+  Future<void> getMe() async {
+    emit(AuthLoading());
+    try {
+      final user = await _userApi.getMe();
+      emit(AuthUserLoaded(user));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
   }
 
   /// Reset state to initial

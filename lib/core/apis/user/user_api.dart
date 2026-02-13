@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:abo_abed_clothing/core/api_links.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
+import 'package:abo_abed_clothing/models/user_model.dart';
 
 class UserApi {
   final ApiService _apiService;
@@ -24,6 +24,26 @@ class UserApi {
 
   Future<dynamic> signup(Map<String, dynamic> data) async {
     final response = await _apiService.postRequest(ApiLinks.signUp, data);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return response.data;
+    } else {
+      return Future.error(response.error ?? 'Unknown error');
+    }
+  }
+
+  Future<dynamic> getMe() async {
+    final response = await _apiService.getRequest(ApiLinks.userInfo);
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return UserModel.fromJson(response.data);
+    } else {
+      return Future.error(response.error ?? 'Unknown error');
+    }
+  }
+
+  Future<dynamic> logout() async {
+    final response = await _apiService.postRequest(ApiLinks.logout, {});
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       return response.data;

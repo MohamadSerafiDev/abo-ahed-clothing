@@ -1,22 +1,22 @@
+import 'package:abo_abed_clothing/screens/auth/profile_screen.dart';
 import 'package:flutter/material.dart';
 import '../place_holder.dart';
-import 'home_screen.dart';
 
-class MainHome extends StatefulWidget {
-  const MainHome({super.key});
+class MainAdminHome extends StatefulWidget {
+  const MainAdminHome({super.key});
 
   @override
-  State<MainHome> createState() => _MainHomeState();
+  State<MainAdminHome> createState() => _MainAdminHomeState();
 }
 
-class _MainHomeState extends State<MainHome> {
+class _MainAdminHomeState extends State<MainAdminHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(), // Home
-    const None(), // Search
-    const None(), // Cart
-    const None(), // Profile
+    const None(), // Dashboard
+    const None(), // Orders
+    const None(), // Products
+    const ProfileScreen(), // Profile
   ];
 
   void _onItemTapped(int index) {
@@ -36,17 +36,16 @@ class _MainHomeState extends State<MainHome> {
           onTap: _onItemTapped,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'الرئيسية',
+              icon: Icon(Icons.dashboard_outlined),
+              label: 'لوحة التحكم',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search_outlined),
-              label: 'البحث',
+              icon: Icon(Icons.receipt_long_outlined),
+              label: 'الطلبات',
             ),
-
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              label: 'السلة',
+              icon: Icon(Icons.inventory_2_outlined),
+              label: 'المنتجات',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_2_outlined),

@@ -22,7 +22,6 @@ class TextStyles {
       GoogleFonts.montserrat(
         fontSize: 32,
         fontWeight: FontWeight.w700, // Bold
-        letterSpacing: -0.5,
         color: _resolveColor(isDark, _lightTextPrimary, _darkTextPrimary),
       );
 
@@ -31,7 +30,6 @@ class TextStyles {
       GoogleFonts.montserrat(
         fontSize: 24,
         fontWeight: FontWeight.w600, // SemiBold
-        letterSpacing: 0,
         color: _resolveColor(isDark, _lightTextPrimary, _darkTextPrimary),
       );
 
@@ -39,7 +37,6 @@ class TextStyles {
   static TextStyle titleLarge({bool isDark = false}) => GoogleFonts.montserrat(
     fontSize: 20,
     fontWeight: FontWeight.w600, // SemiBold
-    letterSpacing: 0.15,
     color: _resolveColor(isDark, _lightTextPrimary, _darkTextPrimary),
   );
 
@@ -47,7 +44,6 @@ class TextStyles {
   static TextStyle bodyLarge({bool isDark = false}) => GoogleFonts.montserrat(
     fontSize: 16,
     fontWeight: FontWeight.w500, // Medium
-    letterSpacing: 0.5,
     color: _resolveColor(isDark, _lightTextSecondary, _darkTextSecondary),
   );
 
@@ -55,7 +51,6 @@ class TextStyles {
   static TextStyle bodyMedium({bool isDark = false}) => GoogleFonts.montserrat(
     fontSize: 14,
     fontWeight: FontWeight.w400, // Regular
-    letterSpacing: 0.25,
     color: _resolveColor(isDark, _lightTextSecondary, _darkTextSecondary),
   );
 
@@ -64,7 +59,6 @@ class TextStyles {
   static TextStyle labelGold = GoogleFonts.montserrat(
     fontSize: 12,
     fontWeight: FontWeight.w700, // Bold
-    letterSpacing: 1.5,
     color: _goldBrand, // Always Gold
   );
 
@@ -73,7 +67,6 @@ class TextStyles {
   static TextStyle buttonText = GoogleFonts.montserrat(
     fontSize: 16,
     fontWeight: FontWeight.w600, // SemiBold
-    letterSpacing: 1.25,
     color: _whiteConstant, // Always White (on gold buttons)
   );
 
@@ -81,7 +74,6 @@ class TextStyles {
   static TextStyle priceText({bool isDark = false}) => GoogleFonts.montserrat(
     fontSize: 18,
     fontWeight: FontWeight.w600, // SemiBold
-    letterSpacing: 0,
     color: _resolveColor(
       isDark,
       _lightTextPrimary,
