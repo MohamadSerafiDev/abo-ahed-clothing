@@ -14,7 +14,7 @@ class _MainAdminHomeState extends State<MainAdminHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const None(), // Dashboard
+    // const None(), // DAshboard
     const None(), // Orders
     const AdminProductsScreen(), // Products
     const ProfileScreen(), // Profile
@@ -36,10 +36,10 @@ class _MainAdminHomeState extends State<MainAdminHome> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              label: 'لوحة التحكم',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.dashboard_outlined),
+            //   label: 'لوحة التحكم',
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.receipt_long_outlined),
               label: 'الطلبات',

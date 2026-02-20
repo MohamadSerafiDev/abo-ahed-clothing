@@ -1,15 +1,23 @@
+import 'dart:io';
+
 import 'package:abo_abed_clothing/blocs/product/product_cubit.dart';
 import 'package:abo_abed_clothing/blocs/product/product_state.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
 import 'package:abo_abed_clothing/core/utils/text_styles.dart';
+import 'package:abo_abed_clothing/models/product_model.dart';
 import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
+import 'package:abo_abed_clothing/widgets/global/chip_selector.dart';
 import 'package:abo_abed_clothing/widgets/global/custom_input.dart';
+import 'package:abo_abed_clothing/widgets/global/image_picker_grid.dart';
+import 'package:abo_abed_clothing/widgets/global/section_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 class CreateProductScreen extends StatefulWidget {
-  const CreateProductScreen({super.key});
+  final ProductModel? initialProduct;
+
+  const CreateProductScreen({super.key, this.initialProduct});
 
   @override
   State<CreateProductScreen> createState() => _CreateProductScreenState();
@@ -25,6 +33,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   String _selectedCondition = 'New';
   String _selectedCategory = 'Men';
   String? _selectedSize;
+  List<File> _selectedImages = [];
+
+  // ── Data ──
 
   static const List<String> _conditions = ['New', 'Used'];
   static const List<String> _categories = [
@@ -47,49 +58,49 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     'xxxxx_large',
   ];
 
-  // Localized labels for categories
-  String _categoryLabel(String cat) {
-    switch (cat) {
-      case 'Men':
-        return 'men'.tr;
-      case 'Women':
-        return 'women'.tr;
-      case 'Kids':
-        return 'children'.tr;
-      case 'summer':
-        return 'summer'.tr;
-      case 'accessories':
-        return 'accessories'.tr;
-      case 'shoes':
-        return 'shoes'.tr;
-      case 'suits':
-        return 'suits'.tr;
-      default:
-        return cat;
-    }
-  }
+  // ── Label Maps ──
 
-  // Display labels for sizes
-  String _sizeLabel(String size) {
-    switch (size) {
-      case 'baby':
-        return 'Baby';
-      case 'midum':
-        return 'Medium';
-      case 'large':
-        return 'Large';
-      case 'x_large':
-        return 'XL';
-      case 'xx_large':
-        return 'XXL';
-      case 'xxx_large':
-        return '3XL';
-      case 'xxxx_large':
-        return '4XL';
-      case 'xxxxx_large':
-        return '5XL';
-      default:
-        return size;
+  static const _categoryLabels = {
+    'Men': 'men',
+    'Women': 'women',
+    'Kids': 'kids',
+    'summer': 'summer',
+    'accessories': 'accessories',
+    'shoes': 'shoes',
+    'suits': 'suits',
+  };
+
+  static const _conditionLabels = {'New': 'new', 'Used': 'used'};
+
+  static const _sizeLabels = {
+    'baby': 'Baby',
+    'midum': 'Medium',
+    'large': 'Large',
+    'x_large': 'XL',
+    'xx_large': 'XXL',
+    'xxx_large': '3XL',
+    'xxxx_large': '4XL',
+    'xxxxx_large': '5XL',
+  };
+
+  bool get _isEditMode => widget.initialProduct != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final product = widget.initialProduct;
+    if (product != null) {
+      _titleController.text = product.title;
+      _priceController.text = product.price.toString();
+      _descriptionController.text = product.description ?? '';
+      _stockController.text = product.stock.toString();
+      _selectedCondition = _conditions.contains(product.condition)
+          ? product.condition
+          : _selectedCondition;
+      _selectedCategory = _categories.contains(product.category)
+          ? product.category
+          : _selectedCategory;
+      _selectedSize = product.size;
     }
   }
 
@@ -102,12 +113,17 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     super.dispose();
   }
 
+  // ── Build ──
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppLightTheme.backgroundWhite,
       appBar: AppBar(
-        title: Text('create_product'.tr, style: TextStyles.headlineMedium()),
+        title: Text(
+          (_isEditMode ? 'update_product' : 'create_product').tr,
+          style: TextStyles.headlineMedium(),
+        ),
         backgroundColor: AppLightTheme.backgroundWhite,
         elevation: 0,
         centerTitle: true,
@@ -122,10 +138,10 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
       body: BlocListener<ProductCubit, ProductState>(
         listener: (context, state) {
           if (state is ProductActionSuccess) {
-            AppSnackbar.showSuccess(message: state.message);
+            AppSnackbar.showSuccess(message: state.message.tr);
             Navigator.pop(context);
           } else if (state is ProductFailure) {
-            AppSnackbar.showError(message: state.error);
+            AppSnackbar.showError(message: state.error.tr);
           }
         },
         child: SingleChildScrollView(
@@ -135,7 +151,24 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
+                !_isEditMode
+                    ?
+                      // ── Media ──
+                      Column(
+                        children: [
+                          SectionLabel(label: 'product_media'.tr),
+                          const SizedBox(height: 8),
+                          ImagePickerGrid(
+                            files: _selectedImages,
+                            onChanged: (files) =>
+                                setState(() => _selectedImages = files),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      )
+                    : const SizedBox(),
+
+                // ── Title ──
                 CustomInput(
                   label: 'product_title'.tr,
                   placeholder: 'enter_product_title'.tr,
@@ -144,7 +177,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                       v == null || v.isEmpty ? 'field_required'.tr : null,
                 ),
 
-                // Price
+                // ── Price ──
                 CustomInput(
                   label: 'price'.tr,
                   placeholder: 'enter_price'.tr,
@@ -157,95 +190,45 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   },
                 ),
 
-                // Condition Selector
-                _buildSectionLabel('condition'.tr),
+                // ── Condition ──
+                SectionLabel(label: 'condition'.tr),
                 const SizedBox(height: 8),
-                Row(
-                  children: _conditions.map((condition) {
-                    final isSelected = _selectedCondition == condition;
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(
-                            condition == 'New' ? 'new'.tr : 'used'.tr,
-                          ),
-                          selected: isSelected,
-                          selectedColor: AppLightTheme.goldPrimary,
-                          backgroundColor: AppLightTheme.surfaceGrey,
-                          labelStyle: TextStyle(
-                            color: isSelected
-                                ? Colors.white
-                                : AppLightTheme.textBody,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          onSelected: (_) {
-                            setState(() => _selectedCondition = condition);
-                          },
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                ChipSelector(
+                  options: _conditions,
+                  selected: _selectedCondition,
+                  labelBuilder: (o) => (_conditionLabels[o] ?? o).tr,
+                  onSelected: (v) => setState(
+                    () => _selectedCondition = v ?? _selectedCondition,
+                  ),
                 ),
                 const SizedBox(height: 24),
 
-                // Category Selector
-                _buildSectionLabel('category'.tr),
+                // ── Category ──
+                SectionLabel(label: 'category'.tr),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _categories.map((category) {
-                    final isSelected = _selectedCategory == category;
-                    return ChoiceChip(
-                      label: Text(_categoryLabel(category)),
-                      selected: isSelected,
-                      selectedColor: AppLightTheme.goldPrimary,
-                      backgroundColor: AppLightTheme.surfaceGrey,
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : AppLightTheme.textBody,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      onSelected: (_) {
-                        setState(() => _selectedCategory = category);
-                      },
-                    );
-                  }).toList(),
+                ChipSelector(
+                  options: _categories,
+                  selected: _selectedCategory,
+                  labelBuilder: (o) => (_categoryLabels[o] ?? o).tr,
+                  onSelected: (v) => setState(
+                    () => _selectedCategory = v ?? _selectedCategory,
+                  ),
                 ),
                 const SizedBox(height: 24),
 
-                // Size Selector
-                _buildSectionLabel('size'.tr),
+                // ── Size ──
+                SectionLabel(label: 'size'.tr),
                 const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _sizes.map((size) {
-                    final isSelected = _selectedSize == size;
-                    return ChoiceChip(
-                      label: Text(_sizeLabel(size)),
-                      selected: isSelected,
-                      selectedColor: AppLightTheme.goldPrimary,
-                      backgroundColor: AppLightTheme.surfaceGrey,
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : AppLightTheme.textBody,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      onSelected: (_) {
-                        setState(() {
-                          _selectedSize = isSelected ? null : size;
-                        });
-                      },
-                    );
-                  }).toList(),
+                ChipSelector(
+                  options: _sizes,
+                  selected: _selectedSize,
+                  allowDeselect: true,
+                  labelBuilder: (o) => _sizeLabels[o] ?? o,
+                  onSelected: (v) => setState(() => _selectedSize = v),
                 ),
                 const SizedBox(height: 24),
 
-                // Description
+                // ── Description ──
                 CustomInput(
                   label: 'description'.tr,
                   placeholder: 'enter_description'.tr,
@@ -253,7 +236,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   keyboardType: TextInputType.multiline,
                 ),
 
-                // Stock
+                // ── Stock ──
                 CustomInput(
                   label: 'stock'.tr,
                   placeholder: 'enter_stock'.tr,
@@ -268,7 +251,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
 
                 const SizedBox(height: 16),
 
-                // Submit Button
+                // ── Submit ──
                 BlocBuilder<ProductCubit, ProductState>(
                   builder: (context, state) {
                     final isLoading = state is ProductLoading;
@@ -289,7 +272,10 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                                 color: Colors.white,
                               )
                             : Text(
-                                'create_product'.tr,
+                                (_isEditMode
+                                        ? 'update_product'
+                                        : 'create_product')
+                                    .tr,
                                 style: TextStyles.buttonText.copyWith(
                                   fontSize: 16,
                                 ),
@@ -307,28 +293,43 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     );
   }
 
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label,
-      style: TextStyles.bodyMedium(
-        isDark: false,
-      ).copyWith(fontWeight: FontWeight.w600, color: Colors.grey[700]),
-    );
-  }
+  // ── Submit ──
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
+    final title = _titleController.text.trim();
+    final price = double.parse(_priceController.text.trim());
+    final description = _descriptionController.text.trim().isEmpty
+        ? null
+        : _descriptionController.text.trim();
+    final stock = int.parse(_stockController.text.trim());
+
+    if (_isEditMode) {
+      context.read<ProductCubit>().updateProduct(
+        widget.initialProduct!.id,
+        title: title,
+        price: price,
+        condition: _selectedCondition,
+        category: _selectedCategory,
+        size: _selectedSize,
+        description: description,
+        stock: stock,
+      );
+      return;
+    }
+
+    final imagePaths = _selectedImages.map((f) => f.path).toList();
+
     context.read<ProductCubit>().createProduct(
-      title: _titleController.text.trim(),
-      price: double.parse(_priceController.text.trim()),
+      title: title,
+      price: price,
       condition: _selectedCondition,
       category: _selectedCategory,
       size: _selectedSize,
-      description: _descriptionController.text.trim().isEmpty
-          ? null
-          : _descriptionController.text.trim(),
-      stock: int.parse(_stockController.text.trim()),
+      description: description,
+      stock: stock,
+      imagePaths: imagePaths,
     );
   }
 }

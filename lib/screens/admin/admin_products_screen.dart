@@ -13,6 +13,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 
 import 'create_product_screen.dart';
+import '../product/product_screen.dart';
 
 class AdminProductsScreen extends StatefulWidget {
   const AdminProductsScreen({super.key});
@@ -66,7 +67,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
             AppSnackbar.showSuccess(message: state.message);
             context.read<ProductCubit>().getAllProducts();
           } else if (state is ProductFailure) {
-            AppSnackbar.showError(message: state.error);
+            AppSnackbar.showError(message: state.error.tr);
           }
         },
         builder: (context, state) {
@@ -86,7 +87,7 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
 
           if (state is ProductFailure) {
             return ErrorState(
-              error: state.error,
+              error: state.error.tr,
               onRetry: () => context.read<ProductCubit>().getAllProducts(),
             );
           }
@@ -113,7 +114,15 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
                 product: product,
                 index: index,
                 onTap: () {
-                  // TODO: Navigate to product details or edit
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductScreen(
+                        productId: product.id,
+                        isAdminMode: true,
+                      ),
+                    ),
+                  );
                 },
               ),
               // Admin delete button

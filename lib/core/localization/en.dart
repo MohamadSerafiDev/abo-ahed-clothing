@@ -46,6 +46,7 @@ const Map<String, String> en = {
   'men': 'Men',
   'women': 'Women',
   'children': 'Children',
+  'kids': 'Kids',
   'new_collection': 'New Collection',
   'used_items': 'Used Items',
 
@@ -84,6 +85,13 @@ const Map<String, String> en = {
   'active_orders': 'Active',
   'order_history': 'History',
   'status': 'Status',
+  'order_status_pending': 'Pending',
+  'order_status_confirmed': 'Confirmed',
+  'order_status_payment_under_review': 'Payment Under Review',
+  'order_status_processing': 'Processing',
+  'order_status_on_way': 'On the Way',
+  'order_status_delivered': 'Delivered',
+  'order_status_cancelled': 'Cancelled',
 
   // Payment Flow
   'payment_method': 'Bank Transfer',
@@ -97,6 +105,7 @@ const Map<String, String> en = {
   'products': 'Products',
   'add_product': 'Add Product',
   'create_product': 'Create Product',
+  'update_product': 'Update Product',
   'product_title': 'Product Title',
   'enter_product_title': 'Enter product title',
   'enter_price': 'Enter price',
@@ -115,6 +124,16 @@ const Map<String, String> en = {
   'invalid_stock': 'Please enter a valid number',
   'suits': 'Suits',
   'no_products_found': 'No products found',
+  'products_load_failed': 'Failed to load products',
+  'product_details_load_failed': 'Failed to load product details',
+  'product_created_successfully': 'Product created successfully',
+  'product_create_failed': 'Failed to create product',
+  'product_updated_successfully': 'Product updated successfully',
+  'product_update_failed': 'Failed to update product',
+  'product_deleted_successfully': 'Product deleted successfully',
+  'product_delete_failed': 'Failed to delete product',
+  'product_added_to_cart': 'Product added to cart',
+  'add_to_cart_failed': 'Failed to add to cart',
 
   // Orders
   'order_placed_success': 'Order placed successfully',
@@ -130,4 +149,22 @@ const Map<String, String> en = {
   'delivery_confirm_failed': 'Failed to confirm delivery',
   'active_orders_failed': 'Failed to load active orders',
   'order_history_failed': 'Failed to load order history',
+  //roles
+  'Customer': 'Customer',
+  'Admin': 'Admin',
+  'Courier': 'Courier',
+
+  // Media / Image Picker
+  'product_images': 'Product Images',
+  'product_media': 'Product Media',
+  'add_images': 'Add Images',
+  'add_media': 'Add Images & Videos',
+  'gallery': 'Gallery',
+  'camera': 'Camera',
+  'take_photo': 'Take Photo',
+  'record_video': 'Record Video',
+  'images_and_videos': 'Images & Videos',
+  'max_images_reached': 'Maximum number of images reached',
+  'max_files_reached': 'Maximum number of files reached',
+  'file_too_large': 'File exceeds 10 MB limit',
 };

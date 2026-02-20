@@ -88,7 +88,7 @@ class _LoginViewState extends State<_LoginView> {
                           final route = getHomeRouteForRole(storage);
                           Get.offAllNamed(route);
                         } else if (state is AuthFailure) {
-                          AppSnackbar.showError(message: state.error);
+                          AppSnackbar.showError(message: state.error.tr);
                         }
                       },
                       builder: (context, state) {

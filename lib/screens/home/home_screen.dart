@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final filteredProducts = _filterProducts(state.products);
                     return _buildLoadedState(context, filteredProducts);
                   } else if (state is ProductFailure) {
-                    return _buildErrorState(context, state.error);
+                    return _buildErrorState(context, state.error.tr);
                   }
                   return _buildEmptyState(context);
                 },
@@ -143,12 +143,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCollectionStories(BuildContext context) {
     final collections = [
-      {'name': 'summer'.tr, 'icon': Icons.wb_sunny_outlined},
-      {'name': 'autumn'.tr, 'icon': Icons.eco_outlined},
-      {'name': 'accessories'.tr, 'icon': Icons.watch_outlined},
-      {'name': 'formal'.tr, 'icon': Icons.business_center_outlined},
-      {'name': 'watches'.tr, 'icon': Icons.access_time_outlined},
-      {'name': 'shoes'.tr, 'icon': Icons.shopping_bag_outlined},
+      {'name': 'men', 'icon': Icons.man},
+      {'name': 'women', 'icon': Icons.woman},
+      {'name': 'kids', 'icon': Icons.child_care},
+      {'name': 'summer', 'icon': Icons.wb_sunny_outlined},
+      {'name': 'accessories', 'icon': Icons.watch_outlined},
+      {'name': 'shoes', 'icon': Icons.shopping_bag_outlined},
+      {'name': 'suits', 'icon': Icons.business_center_outlined},
     ];
 
     return SizedBox(
@@ -158,11 +159,15 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         itemCount: collections.length,
         itemBuilder: (context, index) {
+          final collection = collections[index];
           return CollectionStoryItem(
-            name: collections[index]['name'] as String,
-            icon: collections[index]['icon'] as IconData,
+            name: (collection['name'] as String).tr,
+            icon: collection['icon'] as IconData,
             onTap: () {
-              // TODO: Filter by collection
+              Get.toNamed(
+                Routes.CATEGORY_PRODUCTS,
+                parameters: {'category': collection['name'] as String},
+              );
             },
           );
         },

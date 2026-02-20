@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:abo_abed_clothing/core/apis/product/product_api.dart';
 import 'package:abo_abed_clothing/blocs/product/product_state.dart';
-import 'package:abo_abed_clothing/models/product_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:get/get.dart';
 
 class ProductCubit extends Cubit<ProductState> {
   final ProductApi _productService;
@@ -16,7 +18,7 @@ class ProductCubit extends Cubit<ProductState> {
       if (response != null) {
         emit(ProductsLoaded(response.products));
       } else {
-        emit(ProductFailure('Failed to load products'));
+        emit(ProductFailure('products_load_failed'));
       }
     } catch (e) {
       emit(ProductFailure(e.toString()));
@@ -31,7 +33,7 @@ class ProductCubit extends Cubit<ProductState> {
       if (product != null) {
         emit(ProductDetailsLoaded(product));
       } else {
-        emit(ProductFailure('Failed to load product details'));
+        emit(ProductFailure('product_details_load_failed'));
       }
     } catch (e) {
       emit(ProductFailure(e.toString()));
@@ -47,7 +49,7 @@ class ProductCubit extends Cubit<ProductState> {
     String? size,
     String? description,
     int stock = 1,
-    List<MediaItemModel>? mediaItems,
+    List<String> imagePaths = const [],
   }) async {
     emit(ProductLoading());
     try {
@@ -59,15 +61,16 @@ class ProductCubit extends Cubit<ProductState> {
         size: size,
         description: description,
         stock: stock,
-        mediaItems: mediaItems,
+        imagePaths: imagePaths,
       );
 
       if (product != null) {
-        emit(ProductActionSuccess('Product created successfully', product));
+        emit(ProductActionSuccess('product_created_successfully', product));
       } else {
-        emit(ProductFailure('Failed to create product'));
+        emit(ProductFailure('product_create_failed'));
       }
     } catch (e) {
+      log(e.toString());
       emit(ProductFailure(e.toString()));
     }
   }
@@ -75,6 +78,7 @@ class ProductCubit extends Cubit<ProductState> {
   /// Update product (Admin only)
   Future<void> updateProduct(
     String productId, {
+    String? title,
     double? price,
     String? description,
     int? stock,
@@ -86,6 +90,7 @@ class ProductCubit extends Cubit<ProductState> {
     try {
       final product = await _productService.updateProduct(
         productId,
+        title: title,
         price: price,
         description: description,
         stock: stock,
@@ -95,9 +100,9 @@ class ProductCubit extends Cubit<ProductState> {
       );
 
       if (product != null) {
-        emit(ProductActionSuccess('Product updated successfully', product));
+        emit(ProductActionSuccess('product_updated_successfully', product));
       } else {
-        emit(ProductFailure('Failed to update product'));
+        emit(ProductFailure('product_update_failed'));
       }
     } catch (e) {
       emit(ProductFailure(e.toString()));
@@ -110,9 +115,9 @@ class ProductCubit extends Cubit<ProductState> {
     try {
       final success = await _productService.deleteProduct(productId);
       if (success) {
-        emit(ProductDeleted('Product deleted successfully'));
+        emit(ProductDeleted('product_deleted_successfully'));
       } else {
-        emit(ProductFailure('Failed to delete product'));
+        emit(ProductFailure('product_delete_failed'));
       }
     } catch (e) {
       emit(ProductFailure(e.toString()));
@@ -132,9 +137,9 @@ class ProductCubit extends Cubit<ProductState> {
       );
 
       if (success) {
-        emit(ProductAddedToCart('Product added to cart'));
+        emit(ProductAddedToCart('product_added_to_cart'));
       } else {
-        emit(ProductFailure('Failed to add to cart'));
+        emit(ProductFailure('add_to_cart_failed'));
       }
     } catch (e) {
       emit(ProductFailure(e.toString()));

@@ -7,7 +7,7 @@ class MediaItemModel {
   factory MediaItemModel.fromJson(Map<String, dynamic> json) {
     return MediaItemModel(
       url: json['url'] ?? '',
-      type: json['type'] ?? 'image',
+      type: (json['type'] ?? json['mediaType'] ?? 'image').toString(),
     );
   }
 
@@ -44,6 +44,7 @@ class ProductModel {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    final rawMedia = json['mediaItems'] ?? json['media'];
     return ProductModel(
       id: json['_id'] ?? json['id'] ?? '',
       title: json['title'] ?? '',
@@ -53,8 +54,8 @@ class ProductModel {
       size: json['size'],
       description: json['description'],
       stock: json['stock'] ?? 0,
-      mediaItems: json['mediaItems'] != null
-          ? (json['mediaItems'] as List)
+      mediaItems: rawMedia != null
+          ? (rawMedia as List)
                 .where((item) => item != null)
                 .map(
                   (item) =>
@@ -81,7 +82,7 @@ class ProductModel {
       if (size != null) 'size': size,
       if (description != null) 'description': description,
       'stock': stock,
-      'mediaItems': mediaItems.map((item) => item.toJson()).toList(),
+      'media': mediaItems.map((item) => item.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };

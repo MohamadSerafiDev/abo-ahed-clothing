@@ -5,6 +5,7 @@ import 'package:abo_abed_clothing/core/utils/text_styles.dart';
 import 'package:abo_abed_clothing/widgets/common/state_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -43,7 +44,28 @@ class _OrdersScreenState extends State<OrdersScreen> {
         : 'no_order_history_found'.tr;
   }
 
-  Widget _buildOrderTile(dynamic order) {
+  String _localizedStatusLabel(String status) {
+    switch (status) {
+      case 'Pending':
+        return 'order_status_pending'.tr;
+      case 'Confirmed':
+        return 'order_status_confirmed'.tr;
+      case 'PaymentUnderReview':
+        return 'order_status_payment_under_review'.tr;
+      case 'Processing':
+        return 'order_status_processing'.tr;
+      case 'OnWay':
+        return 'order_status_on_way'.tr;
+      case 'Delivered':
+        return 'order_status_delivered'.tr;
+      case 'Cancelled':
+        return 'order_status_cancelled'.tr;
+      default:
+        return status;
+    }
+  }
+
+  Widget _buildOrderTile(dynamic order, int index) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -64,7 +86,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          Text('${'status'.tr}: ${order.status}', style: TextStyles.bodyMedium()),
+          Text(
+            '${'status'.tr}: ${_localizedStatusLabel(order.status)}',
+            style: TextStyles.bodyMedium(),
+          ),
           const SizedBox(height: 4),
           Text(
             '${'total'.tr}: ${order.totalPrice.toStringAsFixed(2)}',
@@ -77,7 +102,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
         ],
       ),
-    );
+    )
+        .animate(delay: (index * 60).ms)
+        .fadeIn(duration: 280.ms, curve: Curves.easeOut)
+        .slideY(begin: 0.08, end: 0, duration: 280.ms, curve: Curves.easeOut);
   }
 
   Widget _buildOrdersList(List<dynamic> orders) {
@@ -94,7 +122,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         padding: const EdgeInsets.all(16),
         itemCount: orders.length,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) => _buildOrderTile(orders[index]),
+        itemBuilder: (context, index) => _buildOrderTile(orders[index], index),
       ),
     );
   }
@@ -129,27 +157,37 @@ class _OrdersScreenState extends State<OrdersScreen> {
         ),
         body: BlocBuilder<OrderCubit, OrderState>(
           builder: (context, state) {
-            if (state is OrderLoading) {
-              return const LoadingState();
-            }
+            Widget child;
 
-            if (state is OrderFailure) {
-              return ErrorState(
+            if (state is OrderLoading) {
+              child = const LoadingState(key: ValueKey('orders_loading'));
+            } else if (state is OrderFailure) {
+              child = ErrorState(
+                key: const ValueKey('orders_error'),
                 title: 'error'.tr,
                 error: state.error,
                 onRetry: _loadTabData,
               );
+            } else if (state is ActiveOrdersLoaded && _selectedTabIndex == 0) {
+              child = KeyedSubtree(
+                key: const ValueKey('orders_active'),
+                child: _buildOrdersList(state.orders),
+              );
+            } else if (state is OrderHistoryLoaded && _selectedTabIndex == 1) {
+              child = KeyedSubtree(
+                key: const ValueKey('orders_history'),
+                child: _buildOrdersList(state.orders),
+              );
+            } else {
+              child = const LoadingState(key: ValueKey('orders_idle_loading'));
             }
 
-            if (state is ActiveOrdersLoaded && _selectedTabIndex == 0) {
-              return _buildOrdersList(state.orders);
-            }
-
-            if (state is OrderHistoryLoaded && _selectedTabIndex == 1) {
-              return _buildOrdersList(state.orders);
-            }
-
-            return const LoadingState();
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: child,
+            );
           },
         ),
       ),

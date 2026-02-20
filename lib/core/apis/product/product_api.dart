@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_abed_clothing/core/api_links.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
 import 'package:abo_abed_clothing/models/product_model.dart';
@@ -48,7 +50,7 @@ class ProductApi {
     }
   }
 
-  /// Create a new ProductModel (Admin only)
+  /// Create a new ProductModel (Admin only) — multipart with media files
   Future<ProductModel?> createProduct({
     required String title,
     required double price,
@@ -57,23 +59,27 @@ class ProductApi {
     String? size,
     String? description,
     int stock = 1,
-    List<MediaItemModel>? mediaItems,
+    List<String> imagePaths = const [],
   }) async {
     try {
-      final data = {
+      final fields = <String, String>{
         'title': title,
-        'price': price,
+        'price': price.toString(),
         'condition': condition,
         'category': category,
+        'stock': stock.toString(),
         if (size != null) 'size': size,
         if (description != null) 'description': description,
-        'stock': stock,
-        if (mediaItems != null)
-          'mediaItems': mediaItems.map((item) => item.toJson()).toList(),
       };
 
-      final response = await _apiService.postRequest(ApiLinks.products, data);
-
+      final response = await _apiService.multipartPostWithFiles(
+        ApiLinks.products,
+        fields: fields,
+        filePaths: imagePaths,
+        fileFieldName: 'media',
+      );
+      log(response.statusCode.toString(), name: 'create product SC');
+      log(response.data.toString(), name: 'create product response');
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = response.data;
         if (data is Map<String, dynamic>) {
@@ -95,6 +101,7 @@ class ProductApi {
   /// Update product (Admin only)
   Future<ProductModel?> updateProduct(
     String productId, {
+    String? title,
     double? price,
     String? description,
     int? stock,
@@ -103,23 +110,28 @@ class ProductApi {
     String? size,
   }) async {
     try {
-      final data = {
-        if (price != null) 'price': price,
+      final fields = <String, String>{
+        if (title != null) 'title': title,
+        if (price != null) 'price': price.toString(),
         if (description != null) 'description': description,
-        if (stock != null) 'stock': stock,
+        if (stock != null) 'stock': stock.toString(),
         if (condition != null) 'condition': condition,
         if (category != null) 'category': category,
         if (size != null) 'size': size,
       };
-
       final response = await _apiService.putRequest(
         ApiLinks.productById(productId),
-        data,
+        fields,
       );
+      log(response.data.toString(), name: 'update product response');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is Map<String, dynamic>) {
+          if (data.containsKey('updatedProduct') &&
+              data['updatedProduct'] != null) {
+            return ProductModel.fromJson(data['updatedProduct']);
+          }
           if (data.containsKey('product') && data['product'] != null) {
             return ProductModel.fromJson(data['product']);
           } else if (data.containsKey('_id') || data.containsKey('id')) {

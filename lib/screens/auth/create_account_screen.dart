@@ -122,7 +122,7 @@ class _CreateAccountViewState extends State<_CreateAccountView> {
                       if (state is AuthSuccess) {
                         Get.offAllNamed('/login');
                       } else if (state is AuthFailure) {
-                        AppSnackbar.showError(message: state.error);
+                        AppSnackbar.showError(message: state.error.tr);
                       }
                     },
                     builder: (context, state) {

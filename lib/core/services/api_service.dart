@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class ApiService {
   final StorageService storage;
@@ -12,7 +13,7 @@ class ApiService {
   ApiService({required this.storage, this.onUnauthorized});
 
   // Base URL for Abu Ahed Backend
-  final String baseUrl = "http://192.168.1.110:5000/api";
+  final String baseUrl = "http://10.185.202.55:5000/api";
   final Duration _timeout = const Duration(seconds: 45);
 
   Map<String, String> _getHeaders() {
@@ -145,7 +146,7 @@ class ApiService {
   ApiResponse _handleResponse(http.Response response) {
     try {
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
+        final dynamic data = jsonDecode(response.body);
         return ApiResponse(statusCode: response.statusCode, data: data);
       } else {
         if (response.statusCode == 401 || response.statusCode == 403) {
@@ -153,10 +154,9 @@ class ApiService {
             onUnauthorized!(response.statusCode);
           }
 
-          Map<String, dynamic> unauthorizedData = {};
+          dynamic unauthorizedData = {};
           try {
-            unauthorizedData =
-                jsonDecode(response.body) as Map<String, dynamic>;
+            unauthorizedData = jsonDecode(response.body);
           } catch (_) {}
 
           return ApiResponse(
@@ -165,8 +165,12 @@ class ApiService {
             error: 'Unauthorized',
           );
         }
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final error = data['error'] ?? data['message'] ?? 'Unknown error';
+        final dynamic data = jsonDecode(response.body);
+        String error = 'Unknown error';
+        if (data is Map<String, dynamic>) {
+          error = (data['error'] ?? data['message'] ?? 'Unknown error')
+              .toString();
+        }
         return ApiResponse(
           statusCode: response.statusCode,
           data: data,
@@ -179,6 +183,105 @@ class ApiService {
         data: {},
         error: e.toString(),
       );
+    }
+  }
+
+  // SPECIAL: Multipart POST with fields and multiple files
+  Future<ApiResponse> multipartPostWithFiles(
+    String endpoint, {
+    required Map<String, String> fields,
+    required List<String> filePaths,
+    String fileFieldName = 'media',
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl$endpoint'),
+      );
+
+      final token = storage.getToken();
+      request.headers.addAll({
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      });
+
+      request.fields.addAll(fields);
+
+      for (final path in filePaths) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            fileFieldName,
+            path,
+            contentType: _getMediaType(path),
+          ),
+        );
+      }
+      log(request.fields.toString(), name: 'fields');
+      for (var files in request.files) {
+        log(files.toString(), name: 'file_info');
+      }
+
+      final streamedResponse = await request.send().timeout(_timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      log(response.body, name: "multipart response");
+      return _handleResponse(response);
+    } on SocketException {
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
+    }
+  }
+
+  // SPECIAL: Multipart PUT with fields and multiple files
+  Future<ApiResponse> multipartPutWithFiles(
+    String endpoint, {
+    required Map<String, String> fields,
+    required List<String> filePaths,
+    String fileFieldName = 'media',
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl$endpoint'),
+      );
+
+      final token = storage.getToken();
+      request.headers.addAll({
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      });
+
+      request.fields.addAll(fields);
+
+      for (final path in filePaths) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            fileFieldName,
+            path,
+            contentType: _getMediaType(path),
+          ),
+        );
+      }
+
+      final streamedResponse = await request.send().timeout(_timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      return _handleResponse(response);
+    } on SocketException {
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
     }
   }
 
@@ -246,6 +349,36 @@ class ApiService {
       return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
     } catch (e) {
       return ApiResponse(statusCode: 0, data: {}, error: e.toString());
+    }
+  }
+
+  /// Returns the correct MediaType for a file based on its extension.
+  MediaType _getMediaType(String filePath) {
+    final ext = filePath.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return MediaType('image', 'jpeg');
+      case 'png':
+        return MediaType('image', 'png');
+      case 'gif':
+        return MediaType('image', 'gif');
+      case 'webp':
+        return MediaType('image', 'webp');
+      case 'heic':
+        return MediaType('image', 'heic');
+      case 'mp4':
+        return MediaType('video', 'mp4');
+      case 'mov':
+        return MediaType('video', 'quicktime');
+      case 'avi':
+        return MediaType('video', 'x-msvideo');
+      case 'mkv':
+        return MediaType('video', 'x-matroska');
+      case 'wmv':
+        return MediaType('video', 'x-ms-wmv');
+      default:
+        return MediaType('application', 'octet-stream');
     }
   }
 }

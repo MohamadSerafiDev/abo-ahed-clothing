@@ -12,6 +12,7 @@ class ProductInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isNew = product.condition.toLowerCase() == 'new';
+    final sizeLabel = _formatSize(product.size);
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -84,7 +85,20 @@ class ProductInfoSection extends StatelessWidget {
               .animate(delay: 500.ms)
               .fadeIn(duration: 400.ms)
               .scale(begin: const Offset(0.9, 0.9)),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+
+          if (sizeLabel != null) ...[
+            const SizedBox(width: 12),
+            Text(
+              '${'size'.tr}: $sizeLabel',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppLightTheme.textBody,
+              ),
+            ),
+          ],
+          const SizedBox(height: 22),
 
           // Divider
           const Divider(
@@ -123,5 +137,22 @@ class ProductInfoSection extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _formatSize(String? rawSize) {
+    if (rawSize == null || rawSize.isEmpty) return null;
+
+    const sizeMap = {
+      'baby': 'Baby',
+      'midum': 'Medium',
+      'large': 'Large',
+      'x_large': 'XL',
+      'xx_large': 'XXL',
+      'xxx_large': '3XL',
+      'xxxx_large': '4XL',
+      'xxxxx_large': '5XL',
+    };
+
+    return sizeMap[rawSize] ?? rawSize;
   }
 }

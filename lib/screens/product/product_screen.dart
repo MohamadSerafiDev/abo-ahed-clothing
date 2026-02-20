@@ -15,27 +15,40 @@ import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import '../admin/create_product_screen.dart';
 
 /// Screen entry point that provides a scoped [ProductCubit].
 /// This prevents state pollution of the global product list.
 class ProductScreen extends StatelessWidget {
   final String productId;
+  final bool isAdminMode;
 
-  const ProductScreen({super.key, required this.productId});
+  const ProductScreen({
+    super.key,
+    required this.productId,
+    this.isAdminMode = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ProductCubit(context.read<ProductApi>()),
-      child: _ProductDetailsBody(productId: productId),
+      child: _ProductDetailsBody(
+        productId: productId,
+        isAdminMode: isAdminMode,
+      ),
     );
   }
 }
 
 class _ProductDetailsBody extends StatefulWidget {
   final String productId;
+  final bool isAdminMode;
 
-  const _ProductDetailsBody({required this.productId});
+  const _ProductDetailsBody({
+    required this.productId,
+    required this.isAdminMode,
+  });
 
   @override
   State<_ProductDetailsBody> createState() => _ProductDetailsBodyState();
@@ -71,12 +84,13 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
           ProductModel? product;
           if (state is ProductDetailsLoaded) {
             product = state.product;
+            // log(product.toJson().toString(), name: 'loaded product details');
           }
 
           return Stack(
             children: [
               _buildMainContent(state),
-              if (product != null)
+              if (!widget.isAdminMode && product != null)
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -131,7 +145,7 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
       AppSnackbar.showSuccess(message: state.message);
       Get.offAllNamed('/main-home');
     } else if (state is ProductFailure) {
-      AppSnackbar.showError(message: state.error);
+      AppSnackbar.showError(message: state.error.tr);
     }
   }
 
@@ -141,7 +155,7 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
     } else if (state is ProductDetailsLoaded) {
       return _buildProductSlivers(state.product);
     } else if (state is ProductFailure) {
-      log(state.error);
+      log(state.error.tr);
       return ErrorState(error: state.error, onRetry: _loadProduct);
     }
     return const LoadingState();
@@ -157,7 +171,7 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
 
     return CustomScrollView(
       slivers: [
-        _buildAppBar(),
+        _buildAppBar(product),
         SliverToBoxAdapter(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,11 +190,38 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(ProductModel product) {
     return SliverAppBar(
       backgroundColor: AppLightTheme.backgroundWhite,
       elevation: 0,
       pinned: true,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: () => Navigator.pop(context),
+      ),
+      actions: [
+        if (widget.isAdminMode)
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _openEditScreen(product),
+          ),
+      ],
     );
+  }
+
+  Future<void> _openEditScreen(ProductModel product) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (context) => ProductCubit(context.read<ProductApi>()),
+          child: CreateProductScreen(initialProduct: product),
+        ),
+      ),
+    );
+
+    if (mounted) {
+      _loadProduct();
+    }
   }
 }

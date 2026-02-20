@@ -8,6 +8,7 @@ import 'package:abo_abed_clothing/screens/home/main_customer_home.dart';
 import 'package:abo_abed_clothing/screens/introduction/intro_screen.dart';
 import 'package:abo_abed_clothing/screens/place_holder.dart';
 import 'package:abo_abed_clothing/screens/product/product_screen.dart';
+import 'package:abo_abed_clothing/screens/product/category_products_screen.dart';
 import 'package:abo_abed_clothing/routes/role_middleware.dart';
 import 'package:abo_abed_clothing/widgets/common/state_widgets.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,7 @@ abstract class Routes {
   static const COURIER_HOME = '/courier-home';
   static const ROLE_REDIRECT = '/role-redirect';
   static const PRODUCT_DETAILS = '/product-details';
+  static const CATEGORY_PRODUCTS = '/category-products';
   static const CART = '/cart';
   static const PAYMENT_PROOF = '/payment-proof';
   static const CREATE_ACCOUNT = '/create-account';
@@ -79,6 +81,14 @@ class AppPages {
       page: () {
         final productId = Get.parameters['productId'] ?? '';
         return ProductScreen(productId: productId);
+      },
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: Routes.CATEGORY_PRODUCTS,
+      page: () {
+        final category = Get.parameters['category'] ?? '';
+        return CategoryProductsScreen(category: category);
       },
       transition: Transition.fadeIn,
     ),

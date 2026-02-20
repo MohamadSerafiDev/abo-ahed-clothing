@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (state is AuthLoggedOut) {
             Get.offAllNamed('/login');
           } else if (state is AuthFailure) {
-            AppSnackbar.showError(message: state.error);
+            AppSnackbar.showError(message: state.error.tr);
           }
         },
         builder: (context, state) {
@@ -114,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _buildInfoRow(
                           Icons.badge_outlined,
                           'role'.tr,
-                          user.role,
+                          user.role.tr,
                         ),
                       ],
                     ),
