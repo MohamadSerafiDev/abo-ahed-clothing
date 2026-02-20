@@ -19,6 +19,25 @@ class PendingPaymentsLoaded extends OrderState {
   PendingPaymentsLoaded(this.orders);
 }
 
+class ActiveOrdersLoaded extends OrderState {
+  final List<OrderModel> orders;
+
+  ActiveOrdersLoaded(this.orders);
+}
+
+class OrderHistoryLoaded extends OrderState {
+  final List<OrderModel> orders;
+
+  OrderHistoryLoaded(this.orders);
+}
+
+class PaymentVerified extends OrderState {
+  final String message;
+  final Map<String, dynamic> data;
+
+  PaymentVerified(this.message, this.data);
+}
+
 class OrderFailure extends OrderState {
   final String error;
 

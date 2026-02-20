@@ -44,6 +44,7 @@ class ProductCubit extends Cubit<ProductState> {
     required double price,
     required String condition,
     required String category,
+    String? size,
     String? description,
     int stock = 1,
     List<MediaItemModel>? mediaItems,
@@ -55,6 +56,7 @@ class ProductCubit extends Cubit<ProductState> {
         price: price,
         condition: condition,
         category: category,
+        size: size,
         description: description,
         stock: stock,
         mediaItems: mediaItems,
@@ -78,6 +80,7 @@ class ProductCubit extends Cubit<ProductState> {
     int? stock,
     String? condition,
     String? category,
+    String? size,
   }) async {
     emit(ProductLoading());
     try {
@@ -88,6 +91,7 @@ class ProductCubit extends Cubit<ProductState> {
         stock: stock,
         condition: condition,
         category: category,
+        size: size,
       );
 
       if (product != null) {

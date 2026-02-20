@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:abo_abed_clothing/core/api_links.dart';
 import 'package:abo_abed_clothing/core/services/api_service.dart';
 import 'package:abo_abed_clothing/models/user_model.dart';
@@ -34,6 +36,7 @@ class UserApi {
 
   Future<dynamic> getMe() async {
     final response = await _apiService.getRequest(ApiLinks.userInfo);
+    log(response.statusCode.toString());
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       return UserModel.fromJson(response.data);

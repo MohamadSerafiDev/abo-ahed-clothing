@@ -21,7 +21,8 @@ class ProductModel {
   final String title;
   final double price;
   final String condition; // 'New' or 'Used'
-  final String category; // 'Men', 'Women', 'Kids'
+  final String category; // 'Men', 'Women', 'Kids', 'summer', 'accessories', 'shoes', 'suits'
+  final String? size; // 'baby', 'midum', 'large', 'x_large', 'xx_large', 'xxx_large', 'xxxx_large', 'xxxxx_large'
   final String? description;
   final int stock;
   final List<MediaItemModel> mediaItems;
@@ -34,6 +35,7 @@ class ProductModel {
     required this.price,
     required this.condition,
     required this.category,
+    this.size,
     this.description,
     required this.stock,
     required this.mediaItems,
@@ -48,6 +50,7 @@ class ProductModel {
       price: (json['price'] ?? 0).toDouble(),
       condition: json['condition'] ?? 'New',
       category: json['category'] ?? 'Men',
+      size: json['size'],
       description: json['description'],
       stock: json['stock'] ?? 0,
       mediaItems: json['mediaItems'] != null
@@ -75,6 +78,7 @@ class ProductModel {
       'price': price,
       'condition': condition,
       'category': category,
+      if (size != null) 'size': size,
       if (description != null) 'description': description,
       'stock': stock,
       'mediaItems': mediaItems.map((item) => item.toJson()).toList(),
@@ -89,6 +93,7 @@ class ProductModel {
     double? price,
     String? condition,
     String? category,
+    String? size,
     String? description,
     int? stock,
     List<MediaItemModel>? mediaItems,
@@ -101,6 +106,7 @@ class ProductModel {
       price: price ?? this.price,
       condition: condition ?? this.condition,
       category: category ?? this.category,
+      size: size ?? this.size,
       description: description ?? this.description,
       stock: stock ?? this.stock,
       mediaItems: mediaItems ?? this.mediaItems,

@@ -31,8 +31,8 @@ void main() async {
   // Initialize API service
   final apiService = ApiService(
     storage: storageService,
-    onUnauthorized: (statusCode) {
-      // Handle unauthorized access
+    onUnauthorized: (statusCode) async {
+      await storageService.logout();
       Get.offAllNamed(Routes.LOGIN);
     },
   );

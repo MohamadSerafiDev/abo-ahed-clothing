@@ -54,6 +54,7 @@ class ProductApi {
     required double price,
     required String condition,
     required String category,
+    String? size,
     String? description,
     int stock = 1,
     List<MediaItemModel>? mediaItems,
@@ -64,6 +65,7 @@ class ProductApi {
         'price': price,
         'condition': condition,
         'category': category,
+        if (size != null) 'size': size,
         if (description != null) 'description': description,
         'stock': stock,
         if (mediaItems != null)
@@ -98,6 +100,7 @@ class ProductApi {
     int? stock,
     String? condition,
     String? category,
+    String? size,
   }) async {
     try {
       final data = {
@@ -106,6 +109,7 @@ class ProductApi {
         if (stock != null) 'stock': stock,
         if (condition != null) 'condition': condition,
         if (category != null) 'category': category,
+        if (size != null) 'size': size,
       };
 
       final response = await _apiService.putRequest(

@@ -46,3 +46,8 @@ app.*.map.json
 host.txt
 flutter_project.txt
 GEMINI.md
+backend/storeRoutes.js
+.gitignore
+backend/orderRoutes.js
+.gitignore
+backend/orderController.js

@@ -4,7 +4,7 @@
 /// Base URL: http://192.168.59.55:5000/api
 class ApiLinks {
   // Base URL
-  static const String BASE_URL = 'http://192.168.59.55:5000/api';
+  static const String BASE_URL = 'http://192.168.1.110:5000/api';
 
   // ==================== AUTH ENDPOINTS ====================
   static const String login = '/auth/login';
@@ -28,12 +28,26 @@ class ApiLinks {
   static String deleteFromCart(String productId) => '/cart/$productId';
 
   // ==================== ORDER ENDPOINTS ====================
-  static const String checkout = '/orders/checkout';
+  static const String createOrder = '/orders';
+  static const String activeOrders = '/orders/active';
+  static const String ordersHistory = '/orders/history';
   static const String pendingPayments = '/orders/pending-payments';
+
+  // Upload payment image (customer)
+  static String uploadPaymentImage(String orderId) =>
+      '/orders/upload-payment/$orderId';
+
+  // Admin confirm order
+  static String adminConfirmOrder(String orderId) =>
+      '/orders/admin/confirm/$orderId';
 
   // Verify payment (admin only)
   static String verifyPayment(String orderId) =>
-      '/orders/verify-payment/$orderId';
+      '/orders/admin/verify-payment/$orderId';
+
+  // Confirm delivery (admin/courier)
+  static String confirmDelivery(String orderId) =>
+      '/orders/delivery/confirm/$orderId';
 
   // ==================== SHIPPING ENDPOINTS ====================
   static const String myDeliveries = '/shipping/my-deliveries';

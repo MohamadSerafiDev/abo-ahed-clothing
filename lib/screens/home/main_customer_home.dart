@@ -1,7 +1,7 @@
 import 'package:abo_abed_clothing/screens/auth/profile_screen.dart';
 import 'package:abo_abed_clothing/screens/cart/cart_screen.dart';
+import 'package:abo_abed_clothing/screens/order/orders_screen.dart';
 import 'package:flutter/material.dart';
-import '../place_holder.dart';
 import 'home_screen.dart';
 
 class MainCustomerHome extends StatefulWidget {
@@ -16,7 +16,7 @@ class _MainCustomerHomeState extends State<MainCustomerHome> {
 
   final List<Widget> _screens = [
     const HomeScreen(), // Home
-    const None(), // Search
+    const OrdersScreen(), // Orders
     const CartScreen(), // Cart
     const ProfileScreen(), // Profile
   ];
@@ -42,8 +42,8 @@ class _MainCustomerHomeState extends State<MainCustomerHome> {
               label: 'الرئيسية',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search_outlined),
-              label: 'البحث',
+              icon: Icon(Icons.receipt_long_outlined),
+              label: 'الطلبات',
             ),
 
             BottomNavigationBarItem(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -8,7 +6,6 @@ import 'package:abo_abed_clothing/blocs/cart/cart_state.dart';
 import 'package:abo_abed_clothing/blocs/order/order_cubit.dart';
 import 'package:abo_abed_clothing/blocs/order/order_state.dart';
 import 'package:abo_abed_clothing/models/cart_model.dart';
-import 'package:abo_abed_clothing/models/order_model.dart';
 import 'package:abo_abed_clothing/core/utils/text_styles.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
 import 'package:abo_abed_clothing/widgets/common/state_widgets.dart';
@@ -50,13 +47,13 @@ class _CartScreenState extends State<CartScreen> {
           } else if (orderState is OrderSuccess) {
             // Show success message
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              AppSnackbar.showSuccess(message: orderState.message);
+              AppSnackbar.showSuccess(message: orderState.message.tr);
               // TODO: Navigate to order confirmation page or clear cart
             });
           } else if (orderState is OrderFailure) {
             // Show error message
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              AppSnackbar.showError(message: orderState.error);
+              AppSnackbar.showError(message: orderState.error.tr);
             });
           }
         },
@@ -83,7 +80,7 @@ class _CartScreenState extends State<CartScreen> {
     if (state is CartActionSuccess) {
       // Show a snackbar for success actions
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppSnackbar.showSuccess(message: state.message);
+        AppSnackbar.showSuccess(message: state.message.tr);
         // Reload cart to show updates
         context.read<CartCubit>().getCart();
       });
@@ -122,11 +119,19 @@ class _CartContent extends StatefulWidget {
 
 class _CartContentState extends State<_CartContent> {
   late CartModel _localCart;
+  final _addressController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _localCart = widget.cart;
+  }
+
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
   }
 
   @override
@@ -211,26 +216,47 @@ class _CartContentState extends State<_CartContent> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _addressController,
+                keyboardType: TextInputType.streetAddress,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'address_required'.tr;
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  labelText: 'address'.tr,
+                  hintText: 'address_placeholder'.tr,
+                  prefixIcon: const Icon(Icons.location_on_outlined),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppLightTheme.goldPrimary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           CartSummary(
             cart: _localCart,
             onCheckout: () {
-              // Build checkout request from cart items
-              final items = _localCart.items
-                  .map(
-                    (item) => OrderItemRequest(
-                      productId: item.product.id,
-                      quantity: item.quantity,
-                    ),
-                  )
-                  .toList();
-
-              final checkoutRequest = CheckoutRequest(
-                items: items,
-                totalPrice: _localCart.totalPrice,
-                screenshot: '', // TODO: Add screenshot upload
-              );
-              log(checkoutRequest.toJson().toString());
-              context.read<OrderCubit>().checkout(checkoutRequest);
+              if (_formKey.currentState!.validate()) {
+                final address = _addressController.text.trim();
+                context.read<OrderCubit>().createOrder(address: address);
+              }
             },
           ),
         ],

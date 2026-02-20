@@ -148,16 +148,22 @@ class ApiService {
         final Map<String, dynamic> data = jsonDecode(response.body);
         return ApiResponse(statusCode: response.statusCode, data: data);
       } else {
-        if (response.statusCode == 401) {
+        if (response.statusCode == 401 || response.statusCode == 403) {
           if (onUnauthorized != null) {
             onUnauthorized!(response.statusCode);
-
-            return ApiResponse(
-              statusCode: 401,
-              data: jsonDecode(response.body),
-              error: 'Unauthorized',
-            );
           }
+
+          Map<String, dynamic> unauthorizedData = {};
+          try {
+            unauthorizedData =
+                jsonDecode(response.body) as Map<String, dynamic>;
+          } catch (_) {}
+
+          return ApiResponse(
+            statusCode: response.statusCode,
+            data: unauthorizedData,
+            error: 'Unauthorized',
+          );
         }
         final Map<String, dynamic> data = jsonDecode(response.body);
         final error = data['error'] ?? data['message'] ?? 'Unknown error';
@@ -191,6 +197,40 @@ class ApiService {
 
       request.files.add(
         http.MultipartFile.fromBytes('receipt', imageBytes, filename: fileName),
+      );
+
+      final streamedResponse = await request.send().timeout(_timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      return _handleResponse(response);
+    } on SocketException {
+      return ApiResponse(
+        statusCode: 0,
+        data: {},
+        error: "check_your_internet_connection",
+      );
+    } on TimeoutException {
+      return ApiResponse(statusCode: 0, data: {}, error: "time_out_exception");
+    } catch (e) {
+      return ApiResponse(statusCode: 0, data: {}, error: e.toString());
+    }
+  }
+
+  // SPECIAL: Multipart PATCH (For Payment Image Upload)
+  Future<ApiResponse> multipartPatch(
+    String endpoint,
+    List<int> imageBytes,
+    String fileName, {
+    String fieldName = 'paymentImage',
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse('$baseUrl$endpoint'),
+      );
+      request.headers.addAll(_getHeaders());
+
+      request.files.add(
+        http.MultipartFile.fromBytes(fieldName, imageBytes, filename: fileName),
       );
 
       final streamedResponse = await request.send().timeout(_timeout);
