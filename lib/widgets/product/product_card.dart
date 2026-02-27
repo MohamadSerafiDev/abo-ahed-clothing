@@ -1,3 +1,4 @@
+import 'package:abo_abed_clothing/core/api_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
@@ -69,7 +70,8 @@ class ProductCard extends StatelessWidget {
                                 top: Radius.circular(16),
                               ),
                               child: Image.network(
-                                product.firstImageUrl!,
+                                ApiLinks.BASE_URL.replaceAll('/api', '') +
+                                    product.firstImageUrl!,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return const Center(

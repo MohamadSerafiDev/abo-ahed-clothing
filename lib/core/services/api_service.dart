@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:abo_abed_clothing/core/api_links.dart';
 import 'package:abo_abed_clothing/core/storage_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -13,7 +14,7 @@ class ApiService {
   ApiService({required this.storage, this.onUnauthorized});
 
   // Base URL for Abu Ahed Backend
-  final String baseUrl = "http://10.185.202.55:5000/api";
+  final String baseUrl = ApiLinks.BASE_URL;
   final Duration _timeout = const Duration(seconds: 45);
 
   Map<String, String> _getHeaders() {

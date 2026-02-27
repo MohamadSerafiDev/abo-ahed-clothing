@@ -108,6 +108,7 @@ class ProductApi {
     String? condition,
     String? category,
     String? size,
+    List<String> imagePaths = const [],
   }) async {
     try {
       final fields = <String, String>{
@@ -119,10 +120,14 @@ class ProductApi {
         if (category != null) 'category': category,
         if (size != null) 'size': size,
       };
-      final response = await _apiService.putRequest(
-        ApiLinks.productById(productId),
-        fields,
-      );
+      final response = imagePaths.isNotEmpty
+          ? await _apiService.multipartPutWithFiles(
+              ApiLinks.productById(productId),
+              fields: fields,
+              filePaths: imagePaths,
+              fileFieldName: 'media',
+            )
+          : await _apiService.putRequest(ApiLinks.productById(productId), fields);
       log(response.data.toString(), name: 'update product response');
 
       if (response.statusCode == 200) {

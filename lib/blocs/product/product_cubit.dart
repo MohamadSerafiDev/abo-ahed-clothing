@@ -85,6 +85,7 @@ class ProductCubit extends Cubit<ProductState> {
     String? condition,
     String? category,
     String? size,
+    List<String> imagePaths = const [],
   }) async {
     emit(ProductLoading());
     try {
@@ -97,6 +98,7 @@ class ProductCubit extends Cubit<ProductState> {
         condition: condition,
         category: category,
         size: size,
+        imagePaths: imagePaths,
       );
 
       if (product != null) {

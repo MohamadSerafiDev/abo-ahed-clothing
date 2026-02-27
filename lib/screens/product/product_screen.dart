@@ -162,11 +162,25 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
   }
 
   Widget _buildProductSlivers(ProductModel product) {
-    final images = product.mediaItems.isEmpty
+    final media = product.mediaItems.isEmpty
         ? _dummyImages
+              .map(
+                (url) => CarouselMediaItem(
+                  url: url,
+                  type: CarouselMediaType.image,
+                ),
+              )
+              .toList()
         : product.mediaItems
-              .where((item) => item.type == 'image')
-              .map((item) => item.url)
+              .where((item) => item.type == 'image' || item.type == 'video')
+              .map(
+                (item) => CarouselMediaItem(
+                  url: item.url,
+                  type: item.type == 'video'
+                      ? CarouselMediaType.video
+                      : CarouselMediaType.image,
+                ),
+              )
               .toList();
 
     return CustomScrollView(
@@ -176,7 +190,7 @@ class _ProductDetailsBodyState extends State<_ProductDetailsBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ProductImageCarousel(images: images),
+              ProductImageCarousel(media: media),
               ProductInfoSection(product: product),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
