@@ -1,6 +1,7 @@
 import 'package:abo_abed_clothing/core/apis/shipping/shipping_api.dart';
 import 'package:abo_abed_clothing/blocs/shipping/shipping_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 class ShippingCubit extends Cubit<ShippingState> {
   final ShippingApi _shippingService;
@@ -11,12 +12,8 @@ class ShippingCubit extends Cubit<ShippingState> {
   Future<void> getMyDeliveries() async {
     emit(ShippingLoading());
     try {
-      final response = await _shippingService.getMyDeliveries();
-      if (response != null) {
-        emit(DeliveriesLoaded(response.orders));
-      } else {
-        emit(ShippingFailure('Failed to load deliveries'));
-      }
+      final deliveries = await _shippingService.getMyDeliveries();
+      emit(DeliveriesLoaded(deliveries));
     } catch (e) {
       emit(ShippingFailure(e.toString()));
     }
@@ -24,22 +21,22 @@ class ShippingCubit extends Cubit<ShippingState> {
 
   /// Update shipping status
   Future<void> updateShippingStatus({
-    required String orderId,
+    required String shippingId,
     required String status,
   }) async {
     emit(ShippingLoading());
     try {
-      final order = await _shippingService.updateShippingStatus(
-        orderId: orderId,
+      final shipping = await _shippingService.updateShippingStatus(
+        shippingId: shippingId,
         status: status,
       );
 
-      if (order != null) {
-        emit(ShippingSuccess('Status updated successfully', order));
+      if (shipping != null) {
+        emit(ShippingSuccess('shipping_status_updated'.tr, shipping));
         // Reload deliveries after update
         await getMyDeliveries();
       } else {
-        emit(ShippingFailure('Failed to update status'));
+        emit(ShippingFailure('shipping_update_failed'.tr));
       }
     } catch (e) {
       emit(ShippingFailure(e.toString()));

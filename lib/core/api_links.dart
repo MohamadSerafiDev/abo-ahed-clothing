@@ -4,7 +4,7 @@
 /// Base URL: http://192.168.59.55:5000/api
 class ApiLinks {
   // Base URL
-  static const String BASE_URL = 'http://192.168.1.110:5000/api';
+  static const String BASE_URL = 'http://10.199.29.55:5000/api';
 
   // ==================== AUTH ENDPOINTS ====================
   static const String login = '/auth/login';

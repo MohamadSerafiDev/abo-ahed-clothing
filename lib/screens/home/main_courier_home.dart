@@ -1,4 +1,5 @@
 import 'package:abo_abed_clothing/screens/auth/profile_screen.dart';
+import 'package:abo_abed_clothing/screens/courier/courier_deliveries_screen.dart';
 import 'package:flutter/material.dart';
 import '../place_holder.dart';
 
@@ -13,7 +14,7 @@ class _MainCourierHomeState extends State<MainCourierHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const None(), // Deliveries
+    const CourierDeliveriesScreen(), // Deliveries
     const None(), // History
     const ProfileScreen(), // Profile
   ];

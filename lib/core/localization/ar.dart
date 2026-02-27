@@ -231,4 +231,19 @@ const Map<String, String> ar = {
   'max_images_reached': 'تم الوصول للحد الأقصى من الصور',
   'max_files_reached': 'تم الوصول للحد الأقصى من الملفات',
   'file_too_large': 'حجم الملف يتجاوز 10 ميغابايت',
+
+  // ── Courier / Shipping ──
+  'my_deliveries': 'توصيلاتي',
+  'no_deliveries_found': 'لا توجد توصيلات حالياً',
+  'shipping_preparing': 'قيد التجهيز',
+  'shipping_on_way': 'في الطريق',
+  'shipping_delivered': 'تم التوصيل',
+  'shipping_failed': 'فشل التوصيل',
+  'shipping_status_updated': 'تم تحديث حالة الشحنة',
+  'shipping_update_failed': 'فشل في تحديث حالة الشحنة',
+  'mark_on_way': 'بدء التوصيل',
+  'mark_delivered': 'تم التسليم',
+  'mark_failed': 'فشل',
+  'confirm_status_change': 'تأكيد تغيير الحالة',
+  'change_status_to': 'تغيير الحالة إلى',
 };

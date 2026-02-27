@@ -204,4 +204,19 @@ const Map<String, String> en = {
   'max_images_reached': 'Maximum number of images reached',
   'max_files_reached': 'Maximum number of files reached',
   'file_too_large': 'File exceeds 10 MB limit',
+
+  // ── Courier / Shipping ──
+  'my_deliveries': 'My Deliveries',
+  'no_deliveries_found': 'No deliveries found',
+  'shipping_preparing': 'Preparing',
+  'shipping_on_way': 'On Way',
+  'shipping_delivered': 'Delivered',
+  'shipping_failed': 'Failed',
+  'shipping_status_updated': 'Shipping status updated',
+  'shipping_update_failed': 'Failed to update shipping status',
+  'mark_on_way': 'Start Delivery',
+  'mark_delivered': 'Mark Delivered',
+  'mark_failed': 'Failed',
+  'confirm_status_change': 'Confirm Status Change',
+  'change_status_to': 'Change status to',
 };
