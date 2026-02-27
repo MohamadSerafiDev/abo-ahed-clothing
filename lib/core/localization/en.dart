@@ -93,6 +93,10 @@ const Map<String, String> en = {
   'order_status_delivered': 'Delivered',
   'order_status_cancelled': 'Cancelled',
   'order_status_shipped': 'Shipped',
+  'upload_payment_receipt': 'Upload Payment Receipt',
+  'upload_payment_desc': 'Please upload a screenshot of your bank transfer to complete the order.',
+  'choose_image_source': 'Choose Image Source',
+  'waiting_payment_upload': 'Waiting for payment receipt',
 
   // Admin Orders
   'all_orders': 'All Orders',

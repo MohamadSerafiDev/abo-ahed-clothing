@@ -297,10 +297,20 @@ class ApiService {
         'POST',
         Uri.parse('$baseUrl$endpoint'),
       );
-      request.headers.addAll(_getHeaders());
+      
+      final token = storage.getToken();
+      request.headers.addAll({
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      });
 
       request.files.add(
-        http.MultipartFile.fromBytes('receipt', imageBytes, filename: fileName),
+        http.MultipartFile.fromBytes(
+          'receipt',
+          imageBytes,
+          filename: fileName,
+          contentType: _getMediaTypeFromFilename(fileName),
+        ),
       );
 
       final streamedResponse = await request.send().timeout(_timeout);
@@ -331,14 +341,25 @@ class ApiService {
         'PATCH',
         Uri.parse('$baseUrl$endpoint'),
       );
-      request.headers.addAll(_getHeaders());
+      
+      final token = storage.getToken();
+      request.headers.addAll({
+        'Accept': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      });
 
       request.files.add(
-        http.MultipartFile.fromBytes(fieldName, imageBytes, filename: fileName),
+        http.MultipartFile.fromBytes(
+          fieldName,
+          imageBytes,
+          filename: fileName,
+          contentType: _getMediaTypeFromFilename(fileName),
+        ),
       );
 
       final streamedResponse = await request.send().timeout(_timeout);
       final response = await http.Response.fromStream(streamedResponse);
+      log(response.body, name: "multipart patch response");
       return _handleResponse(response);
     } on SocketException {
       return ApiResponse(
@@ -381,6 +402,11 @@ class ApiService {
       default:
         return MediaType('application', 'octet-stream');
     }
+  }
+
+  /// Returns MediaType from filename (for byte arrays)
+  MediaType _getMediaTypeFromFilename(String fileName) {
+    return _getMediaType(fileName);
   }
 }
 

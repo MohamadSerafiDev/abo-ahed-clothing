@@ -44,7 +44,7 @@ class StorageService extends GetxService {
 
   // --- Clear Storage (Logout) ---
   Future<void> logout() async {
-    await _prefs.clear(); // Deletes everything
-    // Or selectively: await _prefs.remove(_tokenKey);
+    await _prefs.clear();
+    await _prefs.setBool(_isFirstTimeKey, true);
   }
 }

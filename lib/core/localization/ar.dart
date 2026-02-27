@@ -162,6 +162,10 @@ const Map<String, String> ar = {
   'order_status_delivered': 'تم التسليم',
   'order_status_cancelled': 'ملغي',
   'order_status_shipped': 'تم الشحن',
+  'upload_payment_receipt': 'رفع إيصال الدفع',
+  'upload_payment_desc': 'يرجى رفع صورة إيصال التحويل البنكي لإتمام الطلب.',
+  'choose_image_source': 'اختر مصدر الصورة',
+  'waiting_payment_upload': 'بانتظار رفع إيصال الدفع',
 
   // Admin Orders
   'all_orders': 'جميع الطلبات',

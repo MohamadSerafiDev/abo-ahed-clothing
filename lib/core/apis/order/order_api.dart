@@ -107,6 +107,7 @@ class OrderApi {
         fileName,
         fieldName: 'paymentImage',
       );
+      // log(response.data.toString(), name: 'upload payment response');
 
       if (response.statusCode == 200) {
         return OrderModel.fromJson(response.data['order']);

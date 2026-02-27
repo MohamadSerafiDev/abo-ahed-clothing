@@ -1,11 +1,13 @@
 import 'package:abo_abed_clothing/blocs/order/order_cubit.dart';
 import 'package:abo_abed_clothing/blocs/order/order_state.dart';
 import 'package:abo_abed_clothing/core/utils/light_theme.dart';
+import 'package:abo_abed_clothing/core/utils/order_helpers.dart';
 import 'package:abo_abed_clothing/core/utils/text_styles.dart';
 import 'package:abo_abed_clothing/models/order_model.dart';
 import 'package:abo_abed_clothing/screens/admin/admin_order_detail_screen.dart';
 import 'package:abo_abed_clothing/widgets/common/state_widgets.dart';
 import 'package:abo_abed_clothing/widgets/global/app_snackbar.dart';
+import 'package:abo_abed_clothing/widgets/order/status_filter_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -44,43 +46,6 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
   List<OrderModel> get _filteredOrders {
     if (_selectedStatus == null) return _allOrders;
     return _allOrders.where((o) => o.status == _selectedStatus).toList();
-  }
-
-  String _statusLabel(String status) {
-    final map = {
-      'Pending': 'order_status_pending'.tr,
-      'Confirmed': 'order_status_confirmed'.tr,
-      'PaymentUnderReview': 'order_status_payment_under_review'.tr,
-      'Processing': 'order_status_processing'.tr,
-      'OnWay': 'order_status_on_way'.tr,
-      'Shipped': 'order_status_shipped'.tr,
-      'Delivered': 'order_status_delivered'.tr,
-      'Cancelled': 'order_status_cancelled'.tr,
-    };
-    return map[status] ?? status;
-  }
-
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'Pending':
-        return Colors.orange;
-      case 'Confirmed':
-        return Colors.blue;
-      case 'PaymentUnderReview':
-        return Colors.purple;
-      case 'Processing':
-        return Colors.teal;
-      case 'OnWay':
-        return Colors.indigo;
-      case 'Shipped':
-        return Colors.cyan;
-      case 'Delivered':
-        return Colors.green;
-      case 'Cancelled':
-        return Colors.red;
-      default:
-        return AppLightTheme.textBody;
-    }
   }
 
   int _statusCount(String status) {
@@ -183,7 +148,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
       child: Row(
         children: [
           // "All" chip
-          _buildChip(
+          StatusFilterChip(
             label: '${'all_statuses'.tr} (${_allOrders.length})',
             isSelected: _selectedStatus == null,
             onTap: () => setState(() => _selectedStatus = null),
@@ -193,14 +158,13 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
             final count = _statusCount(status);
             return Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: _buildChip(
-                label: '${_statusLabel(status)} ($count)',
+              child: StatusFilterChip(
+                label: '${OrderHelpers.getStatusLabel(status)} ($count)',
                 isSelected: _selectedStatus == status,
-                color: _statusColor(status),
+                color: OrderHelpers.getStatusColor(status),
                 onTap: () {
                   setState(() {
-                    _selectedStatus =
-                        _selectedStatus == status ? null : status;
+                    _selectedStatus = _selectedStatus == status ? null : status;
                   });
                 },
               ),
@@ -211,42 +175,10 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
     );
   }
 
-  Widget _buildChip({
-    required String label,
-    required bool isSelected,
-    Color? color,
-    required VoidCallback onTap,
-  }) {
-    final chipColor = color ?? AppLightTheme.goldPrimary;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? chipColor : AppLightTheme.surfaceGrey,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? chipColor : AppLightTheme.dividerColor,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyles.bodyMedium().copyWith(
-            color: isSelected ? Colors.white : AppLightTheme.textBody,
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildOrderTile(OrderModel order) {
-    final customerName =
-        order.customerModel?.name ?? 'customer_name'.tr;
+    final customerName = order.customerModel?.name ?? 'customer_name'.tr;
     final dateStr = DateFormat('yyyy/MM/dd – HH:mm').format(order.createdAt);
-    final statusColor = _statusColor(order.status);
+    final statusColor = OrderHelpers.getStatusColor(order.status);
 
     return GestureDetector(
       onTap: () async {
@@ -298,7 +230,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _statusLabel(order.status),
+                    OrderHelpers.getStatusLabel(order.status),
                     style: TextStyles.bodyMedium().copyWith(
                       color: statusColor,
                       fontWeight: FontWeight.w600,
