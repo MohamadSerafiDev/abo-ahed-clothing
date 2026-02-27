@@ -7,6 +7,26 @@ class OrderApi {
 
   OrderApi(this._apiService);
 
+  /// Get all orders (Admin) — GET /orders
+  Future<List<OrderModel>> getAllOrdersAdmin() async {
+    try {
+      final response = await _apiService.getRequest(ApiLinks.allOrders);
+
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final list = data['orders'] ?? [];
+        if (list is List) {
+          return list.map((item) => OrderModel.fromJson(item)).toList();
+        }
+        return [];
+      } else {
+        throw Exception(response.error ?? 'Failed to fetch all orders');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch all orders: ${e.toString()}');
+    }
+  }
+
   /// Create order from server-side cart — POST /orders
   Future<OrderModel?> createOrder(CreateOrderRequest request) async {
     try {

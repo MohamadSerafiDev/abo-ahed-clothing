@@ -38,6 +38,12 @@ class PaymentVerified extends OrderState {
   PaymentVerified(this.message, this.data);
 }
 
+class AdminAllOrdersLoaded extends OrderState {
+  final List<OrderModel> orders;
+
+  AdminAllOrdersLoaded(this.orders);
+}
+
 class OrderFailure extends OrderState {
   final String error;
 

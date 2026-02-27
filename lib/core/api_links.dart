@@ -28,6 +28,7 @@ class ApiLinks {
   static String deleteFromCart(String productId) => '/cart/$productId';
 
   // ==================== ORDER ENDPOINTS ====================
+  static const String allOrders = '/orders';
   static const String createOrder = '/orders';
   static const String activeOrders = '/orders/active';
   static const String ordersHistory = '/orders/history';

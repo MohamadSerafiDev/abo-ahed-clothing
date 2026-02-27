@@ -1,7 +1,7 @@
+import 'package:abo_abed_clothing/screens/admin/admin_orders_screen.dart';
 import 'package:abo_abed_clothing/screens/admin/admin_products_screen.dart';
 import 'package:abo_abed_clothing/screens/auth/profile_screen.dart';
 import 'package:flutter/material.dart';
-import '../place_holder.dart';
 
 class MainAdminHome extends StatefulWidget {
   const MainAdminHome({super.key});
@@ -15,7 +15,7 @@ class _MainAdminHomeState extends State<MainAdminHome> {
 
   final List<Widget> _screens = [
     // const None(), // DAshboard
-    const None(), // Orders
+    const AdminOrdersScreen(), // Orders
     const AdminProductsScreen(), // Products
     const ProfileScreen(), // Profile
   ];

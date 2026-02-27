@@ -150,6 +150,18 @@ class OrderCubit extends Cubit<OrderState> {
     }
   }
 
+  /// Get all orders (Admin) — GET /orders
+  Future<void> getAllOrdersAdmin() async {
+    emit(OrderLoading());
+    try {
+      final orders = await _orderService.getAllOrdersAdmin();
+      emit(AdminAllOrdersLoaded(orders));
+    } catch (e) {
+      log(e.toString());
+      emit(OrderFailure('admin_orders_failed'.tr));
+    }
+  }
+
   /// Reset state
   void reset() {
     emit(OrderInitial());
